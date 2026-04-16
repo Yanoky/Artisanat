@@ -203,7 +203,7 @@ let history=[], busy=false, ca=8020;
 
 async function callAI(txt) {
   history.push({role:'user', content:txt});
-  const res = await fetch('/.netlify/functions/chat', {
+  const res = await fetch('https://artisani.fromageryannick.workers.dev', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({messages: history})
