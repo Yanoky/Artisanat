@@ -19,29 +19,16 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;display:flex;flex-direction:column}
 
-/* Header */
 header{flex-shrink:0;padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--card)}
 .brand{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.4px}
 .brand em{color:var(--accent);font-style:normal}
 .badge{font-size:10px;padding:3px 8px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-d);font-weight:500;margin-left:10px}
 .live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink2)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-.dot.off{background:var(--ink3);animation:none}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,204,122,.4)}50%{box-shadow:0 0 0 5px rgba(46,204,122,0)}}
 
-/* API banner */
-.api-bar{flex-shrink:0;padding:10px 24px;background:#1A1508;border-bottom:1px solid #3A2A08;display:flex;align-items:center;gap:10px;font-size:12px;color:#C47D0A}
-.api-bar.ok{background:var(--green-bg);border-color:var(--green-d);color:var(--green)}
-.api-bar svg{flex-shrink:0;width:14px;height:14px}
-.api-input{flex:1;max-width:320px;border:1px solid #5A4010;border-radius:7px;padding:6px 10px;font-size:12px;font-family:var(--mono);background:#0A0800;color:var(--ink);outline:none}
-.api-input:focus{border-color:#C47D0A}
-.api-btn{padding:6px 14px;border-radius:7px;background:#C47D0A;color:#fff;border:none;font-size:12px;font-family:var(--font);font-weight:500;cursor:pointer}
-.api-btn:hover{background:#A06808}
-
-/* Layout */
 .shell{flex:1;display:grid;grid-template-columns:1fr 300px;overflow:hidden}
 
-/* Chat */
 .chat{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
 .chat-top{padding:18px 22px 12px;flex-shrink:0}
 .chat-title{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.4px;line-height:1.3;margin-bottom:4px}
@@ -54,7 +41,6 @@ header{flex-shrink:0;padding:12px 24px;border-bottom:1px solid var(--border);dis
 .msgs::-webkit-scrollbar{width:3px}
 .msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-/* Messages */
 .msg{display:flex;gap:9px;align-items:flex-start;animation:up .2s ease}
 @keyframes up{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .av{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-top:2px;font-family:var(--display)}
@@ -66,12 +52,11 @@ header{flex-shrink:0;padding:12px 24px;border-bottom:1px solid var(--border);dis
 .msg-u{flex-direction:row-reverse}
 .msg-u .mbody{align-items:flex-end}
 
-/* Document */
 .doc{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden}
 .doc-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
 .dbadge{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 7px;border-radius:5px}
 .bd{background:var(--accent-l);color:var(--accent);border:1px solid #4A2010}
-.bf{background:#0A1525;color:#4A9EDB;border:1px solid #1A3550}
+.bfa{background:#0A1525;color:#4A9EDB;border:1px solid #1A3550}
 .dnum{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-top:4px}
 .dbody{padding:11px 14px}
 .dobjet{font-size:12px;color:var(--ink2);margin-bottom:9px}
@@ -92,14 +77,12 @@ header{flex-shrink:0;padding:12px 24px;border-bottom:1px solid var(--border);dis
 .dbg{background:transparent;color:var(--ink2);border:1px solid var(--border2)}
 .dbg:hover{border-color:var(--accent);color:var(--accent)}
 
-/* Email */
 .ecard{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden}
 .ehead{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink2)}
 .ehead strong{color:var(--ink);font-weight:500}
 .ebody{padding:12px 14px;font-size:12px;line-height:1.8;color:var(--ink2);white-space:pre-wrap;font-family:var(--mono)}
 .eacts{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:7px}
 
-/* Input */
 .inp-area{flex-shrink:0;padding:12px 22px;border-top:1px solid var(--border);background:var(--card);display:flex;gap:8px;align-items:flex-end}
 .inp-wrap{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:9px;display:flex;align-items:flex-end;transition:border .15s}
 .inp-wrap:focus-within{border-color:var(--accent)}
@@ -107,14 +90,10 @@ textarea.inp{flex:1;background:transparent;border:none;outline:none;padding:9px 
 textarea.inp::placeholder{color:var(--ink3)}
 .send{width:34px;height:34px;border-radius:7px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:3px;transition:background .15s}
 .send:hover{background:var(--accent-d)}
-.send:disabled{background:var(--border2);cursor:not-allowed}
 
-/* Right panel */
 .panel{display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
 .ph{padding:13px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;color:var(--ink3);letter-spacing:.09em;text-transform:uppercase}
 .pscroll{flex:1;overflow-y:auto;padding:10px}
-.pscroll::-webkit-scrollbar{width:3px}
-.pscroll::-webkit-scrollbar-thumb{background:var(--border2)}
 .rdoc{padding:10px;border-radius:8px;border:1px solid transparent;margin-bottom:5px;cursor:pointer;transition:all .15s}
 .rdoc:hover{background:var(--card2);border-color:var(--border2)}
 .rdoc.new{border-color:var(--accent);background:var(--accent-l)}
@@ -136,7 +115,6 @@ textarea.inp::placeholder{color:var(--ink3)}
 .bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:8px;overflow:hidden}
 .bf2{height:100%;border-radius:2px}
 
-/* Loading */
 .dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink3);margin:0 2px;animation:d .8s ease-in-out infinite}
 .dots span:nth-child(2){animation-delay:.13s}
 .dots span:nth-child(3){animation-delay:.26s}
@@ -160,26 +138,19 @@ textarea.inp::placeholder{color:var(--ink3)}
 <header>
   <div>
     <span class="brand">artisan<em>AI</em></span>
-    <span class="badge">DÉMO LIVE</span>
+    <span class="badge">GRATUIT · SANS INSCRIPTION</span>
   </div>
   <div class="live">
-    <div class="dot off" id="dot"></div>
-    <span id="status">Entrez votre clé API</span>
+    <div class="dot"></div>
+    <span>IA active · GPT-4o mini</span>
   </div>
 </header>
-
-<div class="api-bar" id="api-bar">
-  <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.5 1a3.5 3.5 0 0 1 .603 6.947l-3.5 6.5A.5.5 0 0 1 8.165 15H6.5a.5.5 0 0 1-.491-.592l.342-1.709H4.5a.5.5 0 0 1-.491-.592l.342-1.709H2.5a.5.5 0 0 1-.44-.26l-1-1.833a.5.5 0 0 1 .016-.519l4.318-6.85A3.5 3.5 0 0 1 11.5 1zm-9.4 8.34.75 1.376 2.063-.001a.5.5 0 0 1 .491.408l-.306 1.529 1.886.001 3.21-5.963A3.51 3.51 0 0 1 8 6a3.5 3.5 0 0 1 .872-2.32l-3.645 5.78-1.127-.42zM11.5 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>
-  <span>Clé API OpenAI requise pour activer l'IA :</span>
-  <input class="api-input" id="api-input" type="password" placeholder="sk-..."/>
-  <button class="api-btn" onclick="connect()">Connecter</button>
-</div>
 
 <div class="shell">
   <div class="chat">
     <div class="chat-top">
       <div class="chat-title">Vos devis & factures<br>en <em>30 secondes.</em></div>
-      <div class="chat-sub">Décrivez en quelques mots — l'IA génère le document complet.</div>
+      <div class="chat-sub">Décrivez en quelques mots — l'IA génère le document complet. Gratuit, sans inscription.</div>
     </div>
     <div class="quick">
       <span class="q" onclick="fire('Devis pose carrelage salle de bain M. Moreau, 12m², grès cérame + main d\'œuvre')">Devis carrelage</span>
@@ -191,14 +162,14 @@ textarea.inp::placeholder{color:var(--ink3)}
       <div class="msg">
         <div class="av av-ai">AI</div>
         <div class="mbody">
-          <div class="bubble">Bonjour ! Entrez votre clé API OpenAI ci-dessus pour activer l'IA, puis décrivez ce dont vous avez besoin — <strong style="color:var(--ink)">devis, facture ou relance</strong> — en quelques mots naturels.</div>
+          <div class="bubble">Bonjour ! Décrivez-moi ce dont vous avez besoin — <strong style="color:var(--ink)">devis, facture ou relance</strong> — en quelques mots naturels, et je génère le document complet instantanément.<br><br><em style="color:var(--ink3)">Exemple : "Devis toiture M. Martin, ardoises, 60m²"</em></div>
         </div>
       </div>
     </div>
     <div class="inp-area">
       <div class="inp-wrap">
         <textarea class="inp" id="inp" placeholder="Ex : Devis remplacement chaudière M. Martin, Vaillant 24kW + pose…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="send" id="send" onclick="send()" disabled>
+        <button class="send" id="send" onclick="send()">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l12-6-6 12V8H2z"/></svg>
         </button>
       </div>
@@ -228,79 +199,47 @@ textarea.inp::placeholder{color:var(--ink3)}
 <div class="toast" id="toast"></div>
 
 <script>
-const SYSTEM = `Tu es un assistant administratif expert pour artisans et TPE français.
-Tu génères des devis, factures et relances professionnels à partir de descriptions en langage naturel.
-RÈGLES : Réponds UNIQUEMENT en JSON valide. Zéro texte avant ou après.
-Prix réalistes France 2025. TVA 10% bâtiment. Numéros DEV-2025-XXX ou FAC-2025-XXX.
-FORMAT devis/facture: {"type":"devis","intro":"1 phrase","document":{"numero":"DEV-2025-XXX","date":"JJ/MM/AAAA","client":{"nom":"..."},"objet":"...","lignes":[{"description":"...","quantite":X,"unite":"h|m²|u|forfait","prixUnitaire":X,"total":X}],"totalHT":X,"tva":X,"totalTTC":X}}
-FORMAT relance: {"type":"relance","intro":"1 phrase","document":{"objet":"...","corps":"..."}}
-FORMAT texte: {"type":"texte","intro":"réponse courte"}`;
+let history=[], busy=false, ca=8020;
 
-let KEY='', history=[], busy=false, ca=8020;
-
-function connect(){
-  const k=document.getElementById('api-input').value.trim();
-  if(!k.startsWith('sk-')){alert('Clé invalide — elle doit commencer par "sk-"');return;}
-  KEY=k;
-  sessionStorage.setItem('oai',k);
-  const bar=document.getElementById('api-bar');
-  bar.className='api-bar ok';
-  bar.innerHTML='<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg> IA connectée — GPT-4o mini actif';
-  document.getElementById('dot').classList.remove('off');
-  document.getElementById('status').textContent='GPT-4o mini · En ligne';
-  document.getElementById('send').disabled=false;
-  addAI('Parfait, je suis connecté ! Décrivez-moi ce qu\'il vous faut — devis, facture ou relance. Parlez naturellement.',null);
-}
-
-async function callAI(txt){
-  history.push({role:'user',content:txt});
-  const r=await fetch('https://api.openai.com/v1/chat/completions',{
+async function callAI(txt) {
+  history.push({role:'user', content:txt});
+  const res = await fetch('/.netlify/functions/chat', {
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEY},
-    body:JSON.stringify({model:'gpt-4o-mini',temperature:0.3,response_format:{type:'json_object'},messages:[{role:'system',content:SYSTEM},...history]})
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({messages: history})
   });
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erreur API');}
-  const d=await r.json();
-  const t=d.choices[0].message.content;
-  history.push({role:'assistant',content:t});
-  return JSON.parse(t);
+  if(!res.ok) throw new Error('Erreur serveur');
+  const data = await res.json();
+  history.push({role:'assistant', content: JSON.stringify(data)});
+  return data;
 }
 
-async function send(){
-  if(busy||!KEY)return;
+async function send() {
+  if(busy) return;
   const inp=document.getElementById('inp');
   const txt=inp.value.trim();
-  if(!txt)return;
-  inp.value='';inp.style.height='';
-  busy=true;document.getElementById('send').disabled=true;
-  addUser(txt);addTyping();
-  try{
-    const r=await callAI(txt);
+  if(!txt) return;
+  inp.value=''; inp.style.height='';
+  busy=true; document.getElementById('send').disabled=true;
+  addUser(txt); addTyping();
+  try {
+    const r = await callAI(txt);
     removeTyping();
-    addAI(r.intro,null);
+    addAI(r.intro);
     if(r.type==='devis'||r.type==='facture'){renderDoc(r);addToList(r);if(r.document?.totalTTC){ca+=r.document.totalTTC;document.getElementById('sca').textContent=fmt(ca);}}
     else if(r.type==='relance'){renderEmail(r);addToList(r);}
-  }catch(e){removeTyping();addAI('Erreur : '+e.message,null);}
-  busy=false;document.getElementById('send').disabled=false;
+  } catch(e) {
+    removeTyping();
+    addAI('Erreur : '+e.message);
+  }
+  busy=false; document.getElementById('send').disabled=false;
 }
 
-function fire(t){document.getElementById('inp').value=t;send();}
+function fire(t){document.getElementById('inp').value=t; send();}
 
-function addUser(t){
-  const el=mk('div','msg msg-u');
-  el.innerHTML=`<div class="av av-u">Moi</div><div class="mbody"><div class="bubble-u">${esc(t)}</div></div>`;
-  app(el);
-}
-function addAI(t,_){
-  const el=mk('div','msg');
-  el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody"><div class="bubble">${esc(t)}</div></div>`;
-  app(el);
-}
-function addTyping(){
-  const el=mk('div','msg');el.id='typ';
-  el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody"><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div></div>`;
-  app(el);
-}
+function addUser(t){const el=mk('div','msg msg-u');el.innerHTML=`<div class="av av-u">Moi</div><div class="mbody"><div class="bubble-u">${esc(t)}</div></div>`;app(el);}
+function addAI(t){const el=mk('div','msg');el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody"><div class="bubble">${esc(t)}</div></div>`;app(el);}
+function addTyping(){const el=mk('div','msg');el.id='typ';el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody"><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div></div>`;app(el);}
 function removeTyping(){const t=document.getElementById('typ');if(t)t.remove();}
 
 function renderDoc(r){
@@ -308,15 +247,17 @@ function renderDoc(r){
   const tva=d.totalHT>0?Math.round(d.tva/d.totalHT*100):10;
   const rows=d.lignes.map(l=>`<div class="dline"><span class="dl-desc">${esc(l.description)}</span><span class="dl-qty">${l.quantite} ${esc(l.unite)}</span><span class="dl-amt">${fmt(l.total)}</span></div>`).join('');
   const el=mk('div','msg');
-  el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc"><div class="doc-head"><div><span class="dbadge ${isD?'bd':'bf'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div><div style="font-size:13px;font-weight:500;color:var(--ink);text-align:right">${esc(d.client.nom)}</div></div><div class="dbody"><div class="dobjet">${esc(d.objet)}</div><div class="dlines">${rows}</div><div class="dtots"><div class="tr"><span>Total HT</span><span>${fmt(d.totalHT)}</span></div><div class="tr"><span>TVA ${tva}%</span><span>${fmt(d.tva)}</span></div><div class="tr"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div></div></div><div class="dacts"><button class="db dbp" onclick="toast('Email envoyé !')">Envoyer</button><button class="db dbg" onclick="toast('PDF téléchargé !')">PDF</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
+  el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc"><div class="doc-head"><div><span class="dbadge ${isD?'bd':'bfa'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div><div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(d.client.nom)}</div></div><div class="dbody"><div class="dobjet">${esc(d.objet)}</div><div class="dlines">${rows}</div><div class="dtots"><div class="tr"><span>Total HT</span><span>${fmt(d.totalHT)}</span></div><div class="tr"><span>TVA ${tva}%</span><span>${fmt(d.tva)}</span></div><div class="tr"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div></div></div><div class="dacts"><button class="db dbp" onclick="toast('Email envoyé !')">Envoyer</button><button class="db dbg" onclick="toast('PDF téléchargé !')">PDF</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
   app(el);
 }
+
 function renderEmail(r){
   const d=r.document;
   const el=mk('div','msg');
   el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="ecard"><div class="ehead"><strong>Objet :</strong> ${esc(d.objet)}</div><div class="ebody">${esc(d.corps)}</div><div class="eacts"><button class="db dbp" onclick="toast('Email envoyé !')">Envoyer</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
   app(el);
 }
+
 function addToList(r){
   const list=document.getElementById('docs');
   const el=mk('div','rdoc new');
@@ -325,7 +266,7 @@ function addToList(r){
   const ttc=r.document?.totalTTC?fmt(r.document.totalTTC):'';
   const isD=r.type==='devis',isR=r.type==='relance';
   const label=isD?'Devis':isR?'Relance':'Facture';
-  const pill=isD?'pd':isR?'ps':'ps';
+  const pill=isD?'pd':'ps';
   const today=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
   el.innerHTML=`<div class="rt"><span class="rn">${label} — ${esc(nom)}</span><span class="pill ${pill}">${isD?'Brouillon':'Créé'}</span></div><div class="rm">${esc(objet)} · ${today}</div>${ttc?`<div class="ra">${ttc}</div>`:''}`;
   list.prepend(el);
@@ -340,11 +281,6 @@ function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()
 function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function toast(msg){const t=document.getElementById('toast');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function edit(){document.getElementById('inp').value='Modifie le document : ';document.getElementById('inp').focus();}
-
-window.addEventListener('DOMContentLoaded',()=>{
-  const s=sessionStorage.getItem('oai');
-  if(s){document.getElementById('api-input').value=s;connect();}
-});
 </script>
 </body>
 </html>
