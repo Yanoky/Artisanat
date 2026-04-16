@@ -23,12 +23,34 @@ header{flex-shrink:0;padding:12px 24px;border-bottom:1px solid var(--border);dis
 .brand{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.4px}
 .brand em{color:var(--accent);font-style:normal}
 .badge{font-size:10px;padding:3px 8px;border-radius:20px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-d);font-weight:500;margin-left:10px}
-.live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink2)}
+.live{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink2)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,204,122,.4)}50%{box-shadow:0 0 0 5px rgba(46,204,122,0)}}
+.profil-btn{font-size:12px;padding:5px 12px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--ink2);cursor:pointer;font-family:var(--font);transition:all .15s}
+.profil-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Modal profil entreprise */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto}
+.modal h2{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:6px}
+.modal p{font-size:12px;color:var(--ink2);margin-bottom:20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--ink2);margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.field input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--ink);font-family:var(--font);outline:none;transition:border .15s}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--ink3)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.btn-save{flex:1;padding:10px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:background .15s}
+.btn-save:hover{background:var(--accent-d)}
+.btn-cancel{padding:10px 16px;border-radius:8px;background:transparent;color:var(--ink2);border:1px solid var(--border2);font-size:13px;cursor:pointer;font-family:var(--font)}
+.btn-cancel:hover{border-color:var(--accent);color:var(--accent)}
+.profil-notice{flex-shrink:0;background:#1A1508;border-bottom:1px solid #3A2A08;padding:9px 24px;font-size:12px;color:#C47D0A;display:flex;align-items:center;gap:8px;cursor:pointer}
+.profil-notice:hover{background:#221A08}
+.profil-notice.hidden{display:none}
 
 .shell{flex:1;display:grid;grid-template-columns:1fr 300px;overflow:hidden}
-
 .chat{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
 .chat-top{padding:18px 22px 12px;flex-shrink:0}
 .chat-title{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.4px;line-height:1.3;margin-bottom:4px}
@@ -94,6 +116,8 @@ textarea.inp::placeholder{color:var(--ink3)}
 .panel{display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
 .ph{padding:13px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:600;color:var(--ink3);letter-spacing:.09em;text-transform:uppercase}
 .pscroll{flex:1;overflow-y:auto;padding:10px}
+.pscroll::-webkit-scrollbar{width:3px}
+.pscroll::-webkit-scrollbar-thumb{background:var(--border2)}
 .rdoc{padding:10px;border-radius:8px;border:1px solid transparent;margin-bottom:5px;cursor:pointer;transition:all .15s}
 .rdoc:hover{background:var(--card2);border-color:var(--border2)}
 .rdoc.new{border-color:var(--accent);background:var(--accent-l)}
@@ -135,6 +159,30 @@ textarea.inp::placeholder{color:var(--ink3)}
 </head>
 <body>
 
+<!-- Modal profil entreprise -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>Mon entreprise</h2>
+    <p>Ces informations apparaîtront automatiquement sur tous vos devis et factures.</p>
+    <div class="field"><label>Nom de l'entreprise</label><input id="p-nom" placeholder="Ex : Plomberie Bouvier" /></div>
+    <div class="field"><label>Nom du dirigeant</label><input id="p-dirigeant" placeholder="Ex : Marc Bouvier" /></div>
+    <div class="field"><label>Adresse</label><input id="p-adresse" placeholder="Ex : 12 rue des Artisans, 69007 Lyon" /></div>
+    <div class="field-row">
+      <div class="field"><label>Téléphone</label><input id="p-tel" placeholder="06 XX XX XX XX" /></div>
+      <div class="field"><label>Email</label><input id="p-email" placeholder="contact@..." /></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>SIRET</label><input id="p-siret" placeholder="XXX XXX XXX XXXXX" /></div>
+      <div class="field"><label>N° TVA intracommunautaire</label><input id="p-tva" placeholder="FR XX XXXXXXXXX" /></div>
+    </div>
+    <div class="field"><label>Forme juridique</label><input id="p-forme" placeholder="Ex : Auto-entrepreneur, SARL, SAS..." /></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveProfil()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div>
     <span class="brand">artisan<em>AI</em></span>
@@ -143,8 +191,14 @@ textarea.inp::placeholder{color:var(--ink3)}
   <div class="live">
     <div class="dot"></div>
     <span>IA active · GPT-4o mini</span>
+    <button class="profil-btn" onclick="openModal()">Mon entreprise</button>
   </div>
 </header>
+
+<div class="profil-notice" id="profil-notice" onclick="openModal()">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+  Complétez votre profil entreprise pour que vos documents soient valides (SIRET, TVA, coordonnées)
+</div>
 
 <div class="shell">
   <div class="chat">
@@ -162,7 +216,7 @@ textarea.inp::placeholder{color:var(--ink3)}
       <div class="msg">
         <div class="av av-ai">AI</div>
         <div class="mbody">
-          <div class="bubble">Bonjour ! Décrivez-moi ce dont vous avez besoin — <strong style="color:var(--ink)">devis, facture ou relance</strong> — en quelques mots naturels, et je génère le document complet instantanément.<br><br><em style="color:var(--ink3)">Exemple : "Devis toiture M. Martin, ardoises, 60m²"</em></div>
+          <div class="bubble">Bonjour ! Décrivez-moi ce dont vous avez besoin — <strong style="color:var(--ink)">devis, facture ou relance</strong> — en quelques mots naturels.<br><br><em style="color:var(--ink3)">Exemple : "Devis installation électrique M. Faure, tableau + 8 prises, mise aux normes"</em></div>
         </div>
       </div>
     </div>
@@ -199,6 +253,44 @@ textarea.inp::placeholder{color:var(--ink3)}
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Profil entreprise ──
+let profil = {};
+
+function loadProfil() {
+  try { profil = JSON.parse(localStorage.getItem('artisanai_profil') || '{}'); } catch(e) { profil = {}; }
+  if(profil.nom) document.getElementById('profil-notice').classList.add('hidden');
+  fillModal();
+}
+
+function fillModal() {
+  ['nom','dirigeant','adresse','tel','email','siret','tva','forme'].forEach(k => {
+    const el = document.getElementById('p-'+k);
+    if(el) el.value = profil[k] || '';
+  });
+}
+
+function saveProfil() {
+  profil = {
+    nom: document.getElementById('p-nom').value.trim(),
+    dirigeant: document.getElementById('p-dirigeant').value.trim(),
+    adresse: document.getElementById('p-adresse').value.trim(),
+    tel: document.getElementById('p-tel').value.trim(),
+    email: document.getElementById('p-email').value.trim(),
+    siret: document.getElementById('p-siret').value.trim(),
+    tva: document.getElementById('p-tva').value.trim(),
+    forme: document.getElementById('p-forme').value.trim(),
+  };
+  localStorage.setItem('artisanai_profil', JSON.stringify(profil));
+  if(profil.nom) document.getElementById('profil-notice').classList.add('hidden');
+  closeModal();
+  toast('Profil enregistré !');
+}
+
+function openModal() { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', e => { if(e.target === document.getElementById('modal')) closeModal(); });
+
+// ── IA ──
 let history=[], busy=false, ca=8020;
 
 async function callAI(txt) {
@@ -242,17 +334,106 @@ function addAI(t){const el=mk('div','msg');el.innerHTML=`<div class="av av-ai">A
 function addTyping(){const el=mk('div','msg');el.id='typ';el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody"><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div></div>`;app(el);}
 function removeTyping(){const t=document.getElementById('typ');if(t)t.remove();}
 
+// ── PDF avec infos entreprise ──
 let lastDoc=null;
+
 function generatePDF(){
-  if(!lastDoc)return;
+  if(!lastDoc) return;
   const d=lastDoc.document;
-  const rows=d.lignes.map(l=>`<tr><td>${l.description}</td><td style="text-align:center">${l.quantite} ${l.unite}</td><td style="text-align:right">${l.prixUnitaire} 20ac</td><td style="text-align:right">${l.total} 20ac</td></tr>`).join("");
-  const html=`<html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:40px;color:#222;font-size:13px}h1{font-size:20px}table{width:100%;border-collapse:collapse;margin:20px 0}th{background:#f5f5f5;padding:8px;text-align:left;border-bottom:2px solid #ddd}td{padding:8px;border-bottom:1px solid #eee}.tot{width:260px;margin-left:auto}.ttc{font-weight:bold;color:#E8510F}</style></head><body><h1>${d.numero}</h1><p style="color:#888">${d.date}</p><br><div style="display:flex;justify-content:space-between"><div><strong>Client:</strong> ${d.client.nom}</div></div><br><p><strong>Objet:</strong> ${d.objet}</p><table><tr><th>Description</th><th>Qté</th><th>PU HT</th><th>Total HT</th></tr>${rows}</table><table class="tot"><tr><td>Total HT</td><td style="text-align:right">${d.totalHT} €</td></tr><tr><td>TVA 10%</td><td style="text-align:right">${d.tva} €</td></tr><tr class="ttc"><td>Total TTC</td><td style="text-align:right">${d.totalTTC} €</td></tr></table></body></html>`;
-  const w=window.open("","_blank");
+  const p=profil;
+  const rows=d.lignes.map(l=>`
+    <tr>
+      <td>${l.description}</td>
+      <td style="text-align:center">${l.quantite} ${l.unite}</td>
+      <td style="text-align:right">${Number(l.prixUnitaire).toLocaleString('fr-FR')} €</td>
+      <td style="text-align:right">${Number(l.total).toLocaleString('fr-FR')} €</td>
+    </tr>`).join('');
+
+  const emetteur = [
+    p.nom || 'Votre entreprise',
+    p.forme || '',
+    p.dirigeant || '',
+    p.adresse || '',
+    p.tel || '',
+    p.email || '',
+    p.siret ? 'SIRET : ' + p.siret : '',
+    p.tva ? 'N° TVA : ' + p.tva : '',
+  ].filter(Boolean).join('<br>');
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;padding:48px;color:#222;font-size:13px;line-height:1.6}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;padding-bottom:20px;border-bottom:2px solid #E8510F}
+    .emetteur{font-size:12px;color:#444;line-height:1.7}
+    .emetteur strong{font-size:16px;color:#111;display:block;margin-bottom:4px}
+    .doc-title{text-align:right}
+    .doc-title h1{font-size:28px;font-weight:700;color:#E8510F;letter-spacing:-1px}
+    .doc-title .num{font-size:12px;color:#888;margin-top:2px}
+    .doc-title .date{font-size:12px;color:#888}
+    .info-row{display:flex;justify-content:space-between;margin-bottom:28px}
+    .client-box{background:#f8f8f8;border-radius:8px;padding:14px 18px;min-width:200px}
+    .client-box .label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:6px}
+    .client-box .name{font-size:14px;font-weight:700;color:#111}
+    .objet{font-size:13px;color:#444;margin-bottom:24px}
+    .objet strong{color:#111}
+    table{width:100%;border-collapse:collapse;margin-bottom:24px}
+    thead th{background:#111;color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+    thead th:last-child,thead th:nth-child(3){text-align:right}
+    thead th:nth-child(2){text-align:center}
+    tbody tr:nth-child(even){background:#f9f9f9}
+    tbody td{padding:10px 12px;border-bottom:1px solid #eee;font-size:12px}
+    tbody td:last-child,tbody td:nth-child(3){text-align:right}
+    tbody td:nth-child(2){text-align:center;color:#666}
+    .totals{width:280px;margin-left:auto;border:1px solid #eee;border-radius:8px;overflow:hidden}
+    .totals table{margin:0}
+    .totals td{padding:9px 14px;border-bottom:1px solid #eee}
+    .totals tr:last-child td{border:none;background:#111;color:#fff;font-weight:700;font-size:14px}
+    .totals tr:last-child td:last-child{color:#E8510F;font-size:16px}
+    .footer{margin-top:40px;padding-top:16px;border-top:1px solid #eee;font-size:11px;color:#aaa;display:flex;justify-content:space-between}
+    .conditions{margin-top:20px;font-size:11px;color:#888;background:#f8f8f8;border-radius:6px;padding:10px 14px}
+  </style></head><body>
+    <div class="header">
+      <div class="emetteur">${emetteur}</div>
+      <div class="doc-title">
+        <h1>${lastDoc.type === 'devis' ? 'DEVIS' : 'FACTURE'}</h1>
+        <div class="num">${d.numero}</div>
+        <div class="date">Date : ${d.date}</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="objet"><strong>Objet :</strong> ${d.objet}</div>
+      <div class="client-box">
+        <div class="label">Client</div>
+        <div class="name">${d.client.nom}</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Description</th><th>Quantité</th><th>PU HT</th><th>Total HT</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="totals">
+      <table>
+        <tr><td>Total HT</td><td style="text-align:right">${Number(d.totalHT).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>TVA (10%)</td><td style="text-align:right">${Number(d.tva).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Total TTC</td><td style="text-align:right">${Number(d.totalTTC).toLocaleString('fr-FR')} €</td></tr>
+      </table>
+    </div>
+    <div class="conditions">
+      ${lastDoc.type === 'devis' ? 'Devis valable 3 mois. Paiement à réception de facture.' : 'Paiement à 30 jours. Tout retard de paiement entraîne des pénalités de 3 fois le taux légal.'}
+    </div>
+    <div class="footer">
+      <span>Document généré par artisanAI</span>
+      ${p.siret ? '<span>SIRET : ' + p.siret + '</span>' : ''}
+      ${p.tva ? '<span>TVA : ' + p.tva + '</span>' : ''}
+    </div>
+  </body></html>`;
+
+  const w=window.open('','_blank');
   w.document.write(html);
   w.document.close();
-  setTimeout(()=>w.print(),500);
+  setTimeout(()=>w.print(),600);
 }
+
 function renderDoc(r){
   lastDoc=r;
   const d=r.document,isD=r.type==='devis';
@@ -293,6 +474,8 @@ function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()
 function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function toast(msg){const t=document.getElementById('toast');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function edit(){document.getElementById('inp').value='Modifie le document : ';document.getElementById('inp').focus();}
+
+loadProfil();
 </script>
 </body>
 </html>
