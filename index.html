@@ -203,7 +203,7 @@ let history=[], busy=false, ca=8020;
 
 async function callAI(txt) {
   history.push({role:'user', content:txt});
-  const res = await fetch('https://artisani.fromageryannick.workers.dev', {
+  const res = await fetch('/.netlify/functions/chat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({messages: history})
@@ -226,7 +226,7 @@ async function send() {
     const r = await callAI(txt);
     removeTyping();
     addAI(r.intro);
-    if(r.type==='devis'||r.type==='facture'){let lastDoc = null;lastDoc = r;renderDoc(r);addToList(r);if(r.document?.totalTTC){ca+=r.document.totalTTC;document.getElementById('sca').textContent=fmt(ca);}}
+    if(r.type==='devis'||r.type==='facture'){renderDoc(r);addToList(r);if(r.document?.totalTTC){ca+=r.document.totalTTC;document.getElementById('sca').textContent=fmt(ca);}}
     else if(r.type==='relance'){renderEmail(r);addToList(r);}
   } catch(e) {
     removeTyping();
@@ -242,12 +242,23 @@ function addAI(t){const el=mk('div','msg');el.innerHTML=`<div class="av av-ai">A
 function addTyping(){const el=mk('div','msg');el.id='typ';el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody"><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div></div>`;app(el);}
 function removeTyping(){const t=document.getElementById('typ');if(t)t.remove();}
 
+let lastDoc=null;
+function generatePDF(){
+  if(!lastDoc)return;
+  const d=lastDoc.document;
+  const rows=d.lignes.map(l=>`<tr><td>${l.description}</td><td style="text-align:center">${l.quantite} ${l.unite}</td><td style="text-align:right">${l.prixUnitaire} 20ac</td><td style="text-align:right">${l.total} 20ac</td></tr>`).join("");
+  const html=`<html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:40px;color:#222;font-size:13px}h1{font-size:20px}table{width:100%;border-collapse:collapse;margin:20px 0}th{background:#f5f5f5;padding:8px;text-align:left;border-bottom:2px solid #ddd}td{padding:8px;border-bottom:1px solid #eee}.tot{width:260px;margin-left:auto}.ttc{font-weight:bold;color:#E8510F}</style></head><body><h1>${d.numero}</h1><p style="color:#888">${d.date}</p><br><div style="display:flex;justify-content:space-between"><div><strong>Client:</strong> ${d.client.nom}</div></div><br><p><strong>Objet:</strong> ${d.objet}</p><table><tr><th>Description</th><th>Qté</th><th>PU HT</th><th>Total HT</th></tr>${rows}</table><table class="tot"><tr><td>Total HT</td><td style="text-align:right">${d.totalHT} €</td></tr><tr><td>TVA 10%</td><td style="text-align:right">${d.tva} €</td></tr><tr class="ttc"><td>Total TTC</td><td style="text-align:right">${d.totalTTC} €</td></tr></table></body></html>`;
+  const w=window.open("","_blank");
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(),500);
+}
 function renderDoc(r){
   const d=r.document,isD=r.type==='devis';
   const tva=d.totalHT>0?Math.round(d.tva/d.totalHT*100):10;
   const rows=d.lignes.map(l=>`<div class="dline"><span class="dl-desc">${esc(l.description)}</span><span class="dl-qty">${l.quantite} ${esc(l.unite)}</span><span class="dl-amt">${fmt(l.total)}</span></div>`).join('');
   const el=mk('div','msg');
-  el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc"><div class="doc-head"><div><span class="dbadge ${isD?'bd':'bfa'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div><div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(d.client.nom)}</div></div><div class="dbody"><div class="dobjet">${esc(d.objet)}</div><div class="dlines">${rows}</div><div class="dtots"><div class="tr"><span>Total HT</span><span>${fmt(d.totalHT)}</span></div><div class="tr"><span>TVA ${tva}%</span><span>${fmt(d.tva)}</span></div><div class="tr"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div></div></div><div class="dacts"><button class="db dbp" onclick="toast('Email envoyé !')">Envoyer</button><button class="db dbg" onclick="generatePDF(lastDoc)">PDF</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
+  el.innerHTML=`<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc"><div class="doc-head"><div><span class="dbadge ${isD?'bd':'bfa'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div><div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(d.client.nom)}</div></div><div class="dbody"><div class="dobjet">${esc(d.objet)}</div><div class="dlines">${rows}</div><div class="dtots"><div class="tr"><span>Total HT</span><span>${fmt(d.totalHT)}</span></div><div class="tr"><span>TVA ${tva}%</span><span>${fmt(d.tva)}</span></div><div class="tr"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div></div></div><div class="dacts"><button class="db dbp" onclick="toast('Email envoyé !')">Envoyer</button><button class="db dbg" onclick="generatePDF()">PDF</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
   app(el);
 }
 
@@ -272,53 +283,13 @@ function addToList(r){
   list.prepend(el);
   setTimeout(()=>el.classList.remove('new'),6000);
 }
+
 function mk(t,c){const e=document.createElement(t);if(c)e.className=c;return e;}
 function app(el){const m=document.getElementById('msgs');m.appendChild(el);m.scrollTop=m.scrollHeight;}
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,100)+'px';}
-function generatePDF(r) {
-  const d = r.document;
-  const rows = d.lignes.map(l => `
-    <tr><td>${l.description}</td><td style="text-align:center">${l.quantite} ${l.unite}</td><td style="text-align:right">${fmt(l.prixUnitaire)} €</td><td style="text-align:right">${fmt(l.total)} €</td></tr>
-  `).join('');
-  const html = `<html><head><meta charset="UTF-8"><style>
-    body{font-family:Arial,sans-serif;padding:40px;color:#222;font-size:13px}
-    h1{font-size:22px;margin-bottom:4px}
-    .num{color:#888;font-size:12px;margin-bottom:30px}
-    .info{display:flex;justify-content:space-between;margin-bottom:30px}
-    table{width:100%;border-collapse:collapse;margin-bottom:20px}
-    th{background:#f5f5f5;padding:8px;text-align:left;border-bottom:2px solid #ddd;font-size:12px}
-    td{padding:8px;border-bottom:1px solid #eee}
-    .totals{width:260px;margin-left:auto}
-    .totals tr td{border:none;padding:4px 8px}
-    .total-ttc{font-weight:bold;font-size:15px;color:#E8510F}
-    .footer{margin-top:40px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}
-  </style></head><body>
-    <h1>${d.numero}</h1>
-    <div class="num">${d.date}</div>
-    <div class="info">
-      <div><strong>Émetteur</strong><br>Votre entreprise<br>Votre adresse</div>
-      <div><strong>Client</strong><br>${d.client.nom}</div>
-    </div>
-    <p><strong>Objet :</strong> ${d.objet}</p><br>
-    <table>
-      <tr><th>Description</th><th style="text-align:center">Qté</th><th style="text-align:right">PU HT</th><th style="text-align:right">Total HT</th></tr>
-      ${rows}
-    </table>
-    <table class="totals">
-      <tr><td>Total HT</td><td style="text-align:right">${fmt(d.totalHT)} €</td></tr>
-      <tr><td>TVA 10%</td><td style="text-align:right">${fmt(d.tva)} €</td></tr>
-      <tr class="total-ttc"><td><strong>Total TTC</strong></td><td style="text-align:right"><strong>${fmt(d.totalTTC)} €</strong></td></tr>
-    </table>
-    <div class="footer">Document généré par artisanAI</div>
-  </body></html>`;
-  const w = window.open('', '_blank');
-  w.document.write(html);
-  w.document.close();
-  setTimeout(() => w.print(), 500);
-}
 function toast(msg){const t=document.getElementById('toast');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function edit(){document.getElementById('inp').value='Modifie le document : ';document.getElementById('inp').focus();}
 </script>
