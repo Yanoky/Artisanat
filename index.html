@@ -198,12 +198,28 @@ textarea.inp::placeholder{color:var(--ink3)}
 .profil-bar:hover{background:#F5E8C0}
 .profil-bar.hidden{display:none}
 
+/* Mobile bottom nav */
+.mobile-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);padding:8px 16px;gap:8px;z-index:50;align-items:center;justify-content:space-around}
+.mobile-bar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border:none;background:transparent;cursor:pointer;font-family:var(--font);font-size:10px;font-weight:500;color:var(--ink2);border-radius:8px;transition:all .15s}
+.mobile-bar button:hover,.mobile-bar button.active{color:var(--accent);background:var(--accent-l)}
+.mobile-bar button svg{width:20px;height:20px}
+/* Mobile docs drawer */
+.mobile-drawer{display:none;position:fixed;inset:0;z-index:80;flex-direction:column;justify-content:flex-end}
+.mobile-drawer.open{display:flex}
+.drawer-overlay{flex:1;background:rgba(0,0,0,.4)}
+.drawer-content{background:var(--card);border-radius:16px 16px 0 0;padding:20px;max-height:70vh;overflow-y:auto}
+.drawer-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.drawer-title{font-size:15px;font-weight:600;margin-bottom:12px}
 @media(max-width:768px){
   .sidebar{display:none}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .mobile-bar{display:flex}
+  .mobile-drawer .right-panel{display:flex;position:static;border:none;border-radius:0}
+  body{padding-bottom:68px}
+  .stats-row{display:none}
   .two-col{grid-template-columns:1fr}
   .right-panel{display:none}
-  .content{padding:16px}
+  .content{padding:12px}
+  .two-col{height:calc(100vh - 130px)}
 }
 </style>
 </head>
@@ -272,6 +288,37 @@ textarea.inp::placeholder{color:var(--ink3)}
     </div>
   </div>
 </aside>
+
+<!-- Mobile bottom nav -->
+<div class="mobile-bar">
+  <button class="active" onclick="closeDrawer()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+    Assistant
+  </button>
+  <button onclick="openDrawer()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="10" height="12" rx="1.5"/><path d="M5.5 5h5M5.5 7.5h5M5.5 10h3"/></svg>
+    Documents
+  </button>
+  <button onclick="openModal()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
+    Mon entreprise
+  </button>
+</div>
+
+<!-- Mobile docs drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer-content">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title">Documents recents</div>
+    <div style="margin-bottom:10px;padding:8px 10px;background:var(--amber-l);border:1px solid #E0C870;border-radius:8px;font-size:11px;color:var(--amber)">Exemples fictifs - vos vrais documents apparaitront ici.</div>
+    <div id="docs-list-mobile">
+      <div class="rdoc"><div class="rt"><span class="rn">Devis - Renard M.</span><span class="pill ps">Envoye</span></div><div class="rm">Toiture · 14 juin 2025</div><div class="ra">2 340 euro</div></div>
+      <div class="rdoc"><div class="rt"><span class="rn">Facture - Lefebvre</span><span class="pill pp">Paye</span></div><div class="rm">Salle de bain · 10 juin</div><div class="ra">1 860 euro</div></div>
+      <div class="rdoc"><div class="rt"><span class="rn">Facture - Dupont A.</span><span class="pill pl">En retard</span></div><div class="rm">Chauffage · 2 mai</div><div class="ra">720 euro</div></div>
+    </div>
+  </div>
+</div>
 
 <!-- Main -->
 <div class="main">
@@ -432,6 +479,8 @@ function saveProfil() {
 
 function openModal() { fillModal(); document.getElementById('overlay').classList.add('open'); }
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function openDrawer() { document.getElementById('mobile-drawer').classList.add('open'); }
+function closeDrawer() { document.getElementById('mobile-drawer').classList.remove('open'); }
 document.getElementById('overlay').addEventListener('click', e => { if(e.target === document.getElementById('overlay')) closeModal(); });
 
 // ── Stats ──
@@ -547,6 +596,8 @@ function addToList(r) {
   const today = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
   el.innerHTML = `<div class="rt"><span class="rn">${label} — ${esc(nom)}</span><span class="pill pnew">Nouveau</span></div><div class="rm">${esc(objet)} · ${today}</div>${ttc?`<div class="ra">${ttc}</div>`:''}`;
   list.prepend(el);
+  const mlist=document.getElementById('docs-list-mobile');
+  if(mlist){const mel=el.cloneNode(true);mlist.prepend(mel);}
   setTimeout(() => el.classList.remove('new'), 8000);
 }
 
@@ -563,5 +614,3 @@ loadProfil();
 </script>
 </body>
 </html>
-
-
