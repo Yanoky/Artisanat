@@ -934,13 +934,23 @@ function sendEmail(docIndex) {
   const d = r.document;
   const c = d.client || {};
   const typeLabel = r.type === 'devis' ? 'Devis' : r.type === 'avoir' ? 'Avoir' : 'Facture';
-  const p = profil;
+
+  // Toujours lire le profil frais depuis le localStorage
+  let p = {};
+  try { p = JSON.parse(localStorage.getItem('artisanai_profil') || '{}'); } catch(e) {}
 
   const to = c.email || '';
   const subject = encodeURIComponent(`${typeLabel} ${d.numero} — ${p.nom || 'Votre artisan'}`);
-
   const lignesTexte = d.lignes.map(l => `- ${l.description} : ${Number(l.total).toLocaleString('fr-FR')} €`).join('\n');
-  const signature = [p.dirigeant || p.nom || '', p.forme || '', p.adresse || '', p.tel || '', p.email || '', p.siret ? 'SIRET : ' + p.siret : ''].filter(Boolean).join('\n');
+  const signature = [
+    p.dirigeant || p.nom || '',
+    p.forme || '',
+    p.adresse || '',
+    p.tel || '',
+    p.email || '',
+    p.siret ? 'SIRET : ' + p.siret : ''
+  ].filter(Boolean).join('\n');
+
   const body = encodeURIComponent(
 `Bonjour ${c.nom ? c.nom : ''},
 
