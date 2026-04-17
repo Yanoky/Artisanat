@@ -120,6 +120,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14p
 .dbg{background:transparent;color:var(--ink2);border:1px solid var(--border)}
 .dbg:hover{border-color:var(--accent);color:var(--accent)}
 
+/* Client coords in doc card header */
+.client-info{font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.5;text-align:right}
+
 /* Email card */
 .ecard{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .ehead{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink2)}
@@ -561,7 +564,66 @@ function generatePDF() {
   const p = profil;
   const rows = d.lignes.map(l => `<tr><td>${l.description}</td><td style="text-align:center">${l.quantite} ${l.unite}</td><td style="text-align:right">${Number(l.prixUnitaire||0).toLocaleString('fr-FR')} €</td><td style="text-align:right">${Number(l.total||0).toLocaleString('fr-FR')} €</td></tr>`).join('');
   const emetteur = [p.nom||'Votre entreprise', p.forme||'', p.dirigeant||'', p.adresse||'', p.tel||'', p.email||'', p.siret?'SIRET : '+p.siret:'', p.tva?'N° TVA : '+p.tva:''].filter(Boolean).join('<br>');
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:48px;color:#222;font-size:13px;line-height:1.6}.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #D4470C}.emetteur{font-size:12px;color:#444;line-height:1.7}.emetteur strong{font-size:15px;color:#111;display:block;margin-bottom:4px}.doc-title{text-align:right}.doc-title h1{font-size:26px;font-weight:700;color:#D4470C}.doc-title .num{font-size:12px;color:#888;margin-top:2px}.info-row{display:flex;justify-content:space-between;margin-bottom:24px;align-items:flex-start}.client-box{background:#f8f8f8;border-radius:8px;padding:12px 16px;min-width:180px}.client-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:4px}.client-name{font-size:14px;font-weight:700;color:#111}.objet{font-size:13px;color:#444;padding-top:4px}.objet strong{color:#111}table{width:100%;border-collapse:collapse;margin-bottom:24px}thead th{background:#111;color:#fff;padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase}thead th:last-child,thead th:nth-child(3){text-align:right}thead th:nth-child(2){text-align:center}tbody tr:nth-child(even){background:#f9f9f9}tbody td{padding:9px 12px;border-bottom:1px solid #eee;font-size:12px}tbody td:last-child,tbody td:nth-child(3){text-align:right}tbody td:nth-child(2){text-align:center;color:#666}.totals{width:260px;margin-left:auto}.totals table{border:1px solid #eee;border-radius:8px;overflow:hidden}.totals td{padding:8px 14px;border-bottom:1px solid #eee}.totals tr:last-child td{border:none;background:#111;color:#fff;font-weight:700;font-size:14px}.totals tr:last-child td:last-child{color:#D4470C;font-size:16px}.conditions{margin-top:20px;font-size:11px;color:#888;background:#f8f8f8;border-radius:6px;padding:10px 14px}.footer{margin-top:32px;padding-top:14px;border-top:1px solid #eee;font-size:11px;color:#aaa;display:flex;justify-content:space-between}</style></head><body><div class="header"><div class="emetteur">${emetteur}</div><div class="doc-title"><h1>${lastDoc.type==='devis'?'DEVIS':'FACTURE'}</h1><div class="num">${d.numero}</div><div class="num">${d.date}</div></div></div><div class="info-row"><div class="objet"><strong>Objet :</strong> ${d.objet}</div><div class="client-box"><div class="client-label">Client</div><div class="client-name">${d.client.nom}</div></div></div><table><thead><tr><th>Description</th><th>Qté</th><th>PU HT</th><th>Total HT</th></tr></thead><tbody>${rows}</tbody></table><div class="totals"><table><tr><td>Total HT</td><td style="text-align:right">${Number(d.totalHT||0).toLocaleString('fr-FR')} €</td></tr><tr><td>TVA (10%)</td><td style="text-align:right">${Number(d.tva||0).toLocaleString('fr-FR')} €</td></tr><tr><td>Total TTC</td><td style="text-align:right">${Number(d.totalTTC||0).toLocaleString('fr-FR')} €</td></tr></table></div><div class="conditions">${lastDoc.type==='devis'?'Devis valable 3 mois. Paiement à réception de facture.':'Paiement à 30 jours. Tout retard entraîne des pénalités de 3× le taux légal.'}</div><div class="footer"><span>Document généré par artisanAI</span>${p.siret?'<span>SIRET : '+p.siret+'</span>':''}${p.tva?'<span>TVA : '+p.tva+'</span>':''}</div></body></html>`;
+
+  // ── Coordonnées client dans le PDF ──
+  const c = d.client || {};
+  const cpVille = [c.codePostal, c.ville].filter(Boolean).join(' ');
+  const clientCoordLines = [c.adresse, cpVille, c.email, c.tel, c.siret ? 'SIRET : '+c.siret : ''].filter(Boolean);
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;padding:48px;color:#222;font-size:13px;line-height:1.6}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #D4470C}
+    .emetteur{font-size:12px;color:#444;line-height:1.7}
+    .emetteur strong{font-size:15px;color:#111;display:block;margin-bottom:4px}
+    .doc-title{text-align:right}
+    .doc-title h1{font-size:26px;font-weight:700;color:#D4470C}
+    .doc-title .num{font-size:12px;color:#888;margin-top:2px}
+    .info-row{display:flex;justify-content:space-between;margin-bottom:24px;align-items:flex-start}
+    .client-box{background:#f8f8f8;border-radius:8px;padding:14px 18px;min-width:210px}
+    .client-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:6px}
+    .client-name{font-size:14px;font-weight:700;color:#111;margin-bottom:5px}
+    .client-coords{font-size:12px;color:#555;line-height:1.7}
+    .objet{font-size:13px;color:#444;padding-top:4px;max-width:55%}
+    .objet strong{color:#111}
+    table{width:100%;border-collapse:collapse;margin-bottom:24px}
+    thead th{background:#111;color:#fff;padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+    thead th:last-child,thead th:nth-child(3){text-align:right}
+    thead th:nth-child(2){text-align:center}
+    tbody tr:nth-child(even){background:#f9f9f9}
+    tbody td{padding:9px 12px;border-bottom:1px solid #eee;font-size:12px}
+    tbody td:last-child,tbody td:nth-child(3){text-align:right}
+    tbody td:nth-child(2){text-align:center;color:#666}
+    .totals{width:260px;margin-left:auto}
+    .totals table{border:1px solid #eee;border-radius:8px;overflow:hidden}
+    .totals td{padding:8px 14px;border-bottom:1px solid #eee}
+    .totals tr:last-child td{border:none;background:#111;color:#fff;font-weight:700;font-size:14px}
+    .totals tr:last-child td:last-child{color:#D4470C;font-size:16px}
+    .conditions{margin-top:20px;font-size:11px;color:#888;background:#f8f8f8;border-radius:6px;padding:10px 14px}
+    .footer{margin-top:32px;padding-top:14px;border-top:1px solid #eee;font-size:11px;color:#aaa;display:flex;justify-content:space-between}
+  </style></head><body>
+  <div class="header">
+    <div class="emetteur"><strong>${p.nom||'Votre entreprise'}</strong>${[p.forme,p.dirigeant,p.adresse,p.tel,p.email,p.siret?'SIRET : '+p.siret:'',p.tva?'N° TVA : '+p.tva:''].filter(Boolean).join('<br>')}</div>
+    <div class="doc-title"><h1>${lastDoc.type==='devis'?'DEVIS':'FACTURE'}</h1><div class="num">${d.numero}</div><div class="num">${d.date}</div></div>
+  </div>
+  <div class="info-row">
+    <div class="objet"><strong>Objet :</strong> ${d.objet}</div>
+    <div class="client-box">
+      <div class="client-label">Destinataire</div>
+      <div class="client-name">${c.nom||''}</div>
+      ${clientCoordLines.length ? `<div class="client-coords">${clientCoordLines.join('<br>')}</div>` : ''}
+    </div>
+  </div>
+  <table><thead><tr><th>Description</th><th>Qté</th><th>PU HT</th><th>Total HT</th></tr></thead><tbody>${rows}</tbody></table>
+  <div class="totals"><table>
+    <tr><td>Total HT</td><td style="text-align:right">${Number(d.totalHT||0).toLocaleString('fr-FR')} €</td></tr>
+    <tr><td>TVA (10%)</td><td style="text-align:right">${Number(d.tva||0).toLocaleString('fr-FR')} €</td></tr>
+    <tr><td>Total TTC</td><td style="text-align:right">${Number(d.totalTTC||0).toLocaleString('fr-FR')} €</td></tr>
+  </table></div>
+  <div class="conditions">${lastDoc.type==='devis'?'Devis valable 3 mois. Paiement à réception de facture.':'Paiement à 30 jours. Tout retard entraîne des pénalités de 3× le taux légal.'}</div>
+  <div class="footer"><span>Document généré par artisanAI</span>${p.siret?'<span>SIRET : '+p.siret+'</span>':''}${p.tva?'<span>TVA : '+p.tva+'</span>':''}</div>
+  </body></html>`;
+
   const w = window.open('','_blank');
   w.document.write(html);
   w.document.close();
@@ -573,8 +635,36 @@ function renderDoc(r) {
   const d = r.document, isD = r.type === 'devis';
   const tva = d.totalHT > 0 ? Math.round(d.tva/d.totalHT*100) : 10;
   const rows = d.lignes.map(l => `<div class="dline"><span class="dl-desc">${esc(l.description)}</span><span class="dl-qty">${l.quantite} ${esc(l.unite)}</span><span class="dl-amt">${fmt(l.total)}</span></div>`).join('');
+
+  // ── Coordonnées client dans la carte ──
+  const c = d.client || {};
+  const cpVille = [c.codePostal, c.ville].filter(Boolean).join(' ');
+  const coordParts = [c.adresse, cpVille, c.email, c.tel].filter(Boolean);
+  const clientCoords = coordParts.length
+    ? `<div class="client-info">${coordParts.map(esc).join('<br>')}</div>`
+    : '';
+
   const el = mk('div','msg');
-  el.innerHTML = `<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc-card"><div class="doc-head"><div><span class="dbadge ${isD?'bd':'bfa'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div><div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(d.client.nom)}</div></div><div class="doc-body"><div class="dobjet">${esc(d.objet)}</div><div class="dlines">${rows}</div><div class="dtots"><div class="trow"><span>Total HT</span><span>${fmt(d.totalHT)}</span></div><div class="trow"><span>TVA ${tva}%</span><span>${fmt(d.tva)}</span></div><div class="trow"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div></div></div><div class="doc-actions"><button class="db dbp" onclick="toast('Email envoyé !')">✓ Envoyer par email</button><button class="db dbg" onclick="generatePDF()">Télécharger PDF</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
+  el.innerHTML = `<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc-card">
+    <div class="doc-head">
+      <div><span class="dbadge ${isD?'bd':'bfa'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div>
+      <div style="text-align:right"><div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(c.nom||d.client?.nom||'')}</div>${clientCoords}</div>
+    </div>
+    <div class="doc-body">
+      <div class="dobjet">${esc(d.objet)}</div>
+      <div class="dlines">${rows}</div>
+      <div class="dtots">
+        <div class="trow"><span>Total HT</span><span>${fmt(d.totalHT)}</span></div>
+        <div class="trow"><span>TVA ${tva}%</span><span>${fmt(d.tva)}</span></div>
+        <div class="trow"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div>
+      </div>
+    </div>
+    <div class="doc-actions">
+      <button class="db dbp" onclick="toast('Email envoyé !')">✓ Envoyer par email</button>
+      <button class="db dbg" onclick="generatePDF()">Télécharger PDF</button>
+      <button class="db dbg" onclick="edit()">Modifier</button>
+    </div>
+  </div></div>`;
   app(el);
 }
 
