@@ -886,9 +886,22 @@ function renderDoc(r) {
 
 function renderEmail(r) {
   const d = r.document;
+  const emailIndex = window._docs ? window._docs.length : 0;
+  if (!window._docs) window._docs = [];
+  window._docs.push(r);
   const el = mk('div','msg');
-  el.innerHTML = `<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="ecard"><div class="ehead"><strong>Objet :</strong> ${esc(d.objet)}</div><div class="ebody">${esc(d.corps)}</div><div class="eacts"><button class="db dbp" onclick="toast('Email envoyé !')">✓ Envoyer</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
+  el.innerHTML = `<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="ecard"><div class="ehead"><strong>Objet :</strong> ${esc(d.objet)}</div><div class="ebody">${esc(d.corps)}</div><div class="eacts"><button class="db dbp" onclick="sendRelance(${emailIndex})">✓ Envoyer par email</button><button class="db dbg" onclick="edit()">Modifier</button></div></div></div>`;
   app(el);
+}
+
+function sendRelance(docIndex) {
+  const r = window._docs[docIndex];
+  if (!r) return;
+  const d = r.document;
+  const subject = encodeURIComponent(d.objet || 'Relance');
+  const body = encodeURIComponent(d.corps || '');
+  window.open(`mailto:?subject=${subject}&body=${body}`, '_self');
+  toast('Messagerie ouverte — vérifiez le destinataire avant d\'envoyer !');
 }
 
 function addToList(r) {
@@ -948,8 +961,8 @@ ${p.email || ''}
 ${p.nom || ''}`
   );
 
-  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-  toast('Messagerie ouverte — pensez à joindre le PDF !');
+  window.open(`mailto:${to}?subject=${subject}&body=${body}`, '_self');
+  toast('Messagerie ouverte — vérifiez le destinataire et joignez le PDF !');
 }
 
 function genAvoir(numFacture, nomClient) {
