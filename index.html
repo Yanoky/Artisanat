@@ -849,8 +849,13 @@ function renderDoc(r) {
   const badgeClass = isD ? 'bd' : isA ? 'bavo' : 'bfa';
   const badgeLabel = isD ? 'Devis' : isA ? 'Avoir' : 'Facture';
 
+  // Stocker le doc pour référence email
+  const docIndex = window._docs ? window._docs.length : 0;
+  if (!window._docs) window._docs = [];
+  window._docs.push(r);
+
   // Boutons selon type
-  let actionBtns = `<button class="db dbp" onclick="toast('Email envoyé !')">✓ Envoyer par email</button>
+  let actionBtns = `<button class="db dbp" onclick="sendEmail(${docIndex})">✓ Envoyer par email</button>
       <button class="db dbg" onclick="generatePDF()">Télécharger PDF</button>
       <button class="db dbg" onclick="edit()">Modifier</button>`;
   if (isD) {
@@ -909,6 +914,44 @@ function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function sendEmail(docIndex) {
+  const r = window._docs[docIndex];
+  if (!r) return;
+  const d = r.document;
+  const c = d.client || {};
+  const typeLabel = r.type === 'devis' ? 'Devis' : r.type === 'avoir' ? 'Avoir' : 'Facture';
+  const p = profil;
+
+  const to = c.email || '';
+  const subject = encodeURIComponent(`${typeLabel} ${d.numero} — ${p.nom || 'Votre artisan'}`);
+
+  const lignesTexte = d.lignes.map(l => `- ${l.description} : ${Number(l.total).toLocaleString('fr-FR')} €`).join('\n');
+  const body = encodeURIComponent(
+`Bonjour ${c.nom ? c.nom : ''},
+
+Veuillez trouver ci-joint votre ${typeLabel.toLowerCase()} n° ${d.numero} du ${d.date}.
+
+Objet : ${d.objet}
+
+${lignesTexte}
+
+Total HT : ${Number(d.totalHT).toLocaleString('fr-FR')} €
+TVA : ${Number(d.tva).toLocaleString('fr-FR')} €
+Total TTC : ${Number(d.totalTTC).toLocaleString('fr-FR')} €
+
+${r.type === 'devis' ? 'Ce devis est valable 3 mois. Pour acceptation, merci de nous retourner ce document signé.' : r.type === 'avoir' ? 'Cet avoir sera déduit de votre prochaine facture ou remboursé selon votre convenance.' : 'Règlement à réception de la présente facture.'}
+
+Cordialement,
+${p.dirigeant || p.nom || ''}
+${p.tel || ''}
+${p.email || ''}
+${p.nom || ''}`
+  );
+
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  toast('Messagerie ouverte — pensez à joindre le PDF !');
+}
+
 function genAvoir(numFacture, nomClient) {
   const txt = `Avoir sur facture ${numFacture}${nomClient ? ' pour ' + nomClient : ''}, annulation totale de la facture`;
   document.getElementById('inp').value = txt;
