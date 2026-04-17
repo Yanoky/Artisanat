@@ -138,6 +138,10 @@ textarea.inp{flex:1;background:transparent;border:none;outline:none;padding:9px 
 textarea.inp::placeholder{color:var(--ink3)}
 .send{width:34px;height:34px;border-radius:8px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:3px;transition:background .15s}
 .send:hover{background:var(--accent-d)}
+.mic{width:34px;height:34px;border-radius:8px;background:transparent;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;color:var(--ink3)}
+.mic:hover{border-color:var(--accent);color:var(--accent)}
+.mic.recording{background:var(--accent);border-color:var(--accent);color:#fff;animation:micpulse 1s infinite}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(212,71,12,.4)}50%{box-shadow:0 0 0 6px rgba(212,71,12,0)}}
 
 /* Right panel */
 .right-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;overflow:hidden}
@@ -394,13 +398,23 @@ textarea.inp::placeholder{color:var(--ink3)}
           <div class="msg">
             <div class="av av-ai">AI</div>
             <div class="mbody">
-              <div class="bubble">Bonjour ! Décrivez-moi ce dont vous avez besoin — <strong>devis, facture ou relance</strong> — en quelques mots naturels.<br><br><span style="color:var(--ink3);font-size:12px">Exemple : "Devis installation électrique M. Faure, tableau + 8 prises, mise aux normes"</span></div>
+              <div class="bubble">Bonjour ! Décrivez-moi ce dont vous avez besoin en quelques mots naturels — ou utilisez le <strong>🎙 micro</strong> pour dicter directement.<br><br>
+              <strong>Commencez toujours par le type de document</strong> pour une numérotation automatique :<br><br>
+              <span style="color:var(--ink3);font-size:12px">
+              📄 <strong style="color:var(--ink)">Devis</strong> → "Devis pose carrelage M. Martin, 15m²..."<br>
+              🧾 <strong style="color:var(--ink)">Facture</strong> → "Facture remplacement chauffe-eau Mme Dupuis..."<br>
+              ✉️ <strong style="color:var(--ink)">Relance</strong> → "Relance impayée M. Bernard 890€, 30 jours de retard..."
+              </span>
+              </div>
             </div>
           </div>
         </div>
         <div class="inp-area">
+          <button class="mic" id="mic-btn" onclick="toggleMic()" title="Dicter vocalement">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="1" width="6" height="9" rx="3"/><path d="M2 8a6 6 0 0 0 12 0"/><line x1="8" y1="14" x2="8" y2="16"/><line x1="5" y1="16" x2="11" y2="16"/></svg>
+          </button>
           <div class="inp-wrap">
-            <textarea class="inp" id="inp" placeholder="Ex : Devis remplacement chaudière M. Martin, Vaillant 24kW + pose…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <textarea class="inp" id="inp" placeholder="Ex : Devis remplacement chaudière M. Martin, Vaillant 24kW + pose… (ou cliquez sur le micro 🎙)" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
             <button class="send" id="send-btn" onclick="send()">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l12-6-6 12V8H2z"/></svg>
             </button>
@@ -515,7 +529,15 @@ function updateStats(r) {
 let history = [], busy = false;
 
 async function callAI(txt) {
-  history.push({role:'user', content:txt});
+  // Détecter le type pour pré-générer le numéro
+  const isFacture = /facture|avoir/i.test(txt);
+  const isDevis = /devis/i.test(txt);
+  let numeroHint = '';
+  if (isDevis) numeroHint = ` [numéro à utiliser: ${getNextNumero('devis')}]`;
+  else if (isFacture) numeroHint = ` [numéro à utiliser: ${getNextNumero('facture')}]`;
+
+  const msgAvecNumero = numeroHint ? txt + numeroHint : txt;
+  history.push({role:'user', content: msgAvecNumero});
   const res = await fetch('https://artisani.fromageryannick.workers.dev', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -699,6 +721,50 @@ function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()
 function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function edit(){document.getElementById('inp').value='Modifie le document : ';document.getElementById('inp').focus();}
+
+// ── Numérotation séquentielle ──
+function getNextNumero(type) {
+  const year = new Date().getFullYear();
+  const key = type === 'devis' ? 'artisanai_counter_devis' : 'artisanai_counter_facture';
+  const current = parseInt(localStorage.getItem(key) || '0') + 1;
+  localStorage.setItem(key, current);
+  const pad = String(current).padStart(3, '0');
+  return type === 'devis' ? `DEV-${year}-${pad}` : `FAC-${year}-${pad}`;
+}
+
+// ── Dictée vocale ──
+let recognition = null, isRecording = false;
+
+function toggleMic() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { toast('Dictée non supportée sur ce navigateur'); return; }
+  if (isRecording) {
+    recognition.stop();
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onstart = () => {
+    isRecording = true;
+    document.getElementById('mic-btn').classList.add('recording');
+    toast('🎙 Parlez...');
+  };
+  recognition.onresult = (e) => {
+    const txt = e.results[0][0].transcript;
+    const inp = document.getElementById('inp');
+    inp.value = (inp.value ? inp.value + ' ' : '') + txt;
+    autoResize(inp);
+    inp.focus();
+  };
+  recognition.onerror = () => { toast('Erreur micro — vérifiez les permissions'); };
+  recognition.onend = () => {
+    isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+  };
+  recognition.start();
+}
 
 loadProfil();
 </script>
