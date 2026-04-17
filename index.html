@@ -227,6 +227,32 @@ textarea.inp::placeholder{color:var(--ink3)}
 .rgpd-section p{font-size:12px;color:var(--ink2);line-height:1.8}
 .rgpd-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);color:var(--green);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:16px}
 
+/* Modal RGPD */
+.rgpd-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto}
+.rgpd-modal h2{font-size:17px;font-weight:600;margin-bottom:4px}
+.rgpd-sub{font-size:12px;color:var(--ink3);margin-bottom:16px}
+.rgpd-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-l);color:var(--green);font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;margin-bottom:18px}
+.rgpd-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.rgpd-section:last-child{border:none;margin:0;padding:0}
+.rgpd-section h3{font-size:11px;font-weight:600;color:var(--ink);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.rgpd-section p{font-size:12px;color:var(--ink2);line-height:1.8}
+.rgpd-close{width:100%;margin-top:20px;padding:10px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font)}
+.rgpd-close:hover{background:var(--accent-d)}
+
+/* Bouton suppression données */
+.btn-delete{width:100%;margin-top:12px;padding:9px;border-radius:8px;background:transparent;color:#C0392B;border:1px solid #E8B4B0;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s}
+.btn-delete:hover{background:#FDF0EF;border-color:#C0392B}
+
+/* Modal confirmation suppression */
+.confirm-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:400px;text-align:center}
+.confirm-modal h2{font-size:17px;font-weight:600;margin-bottom:10px;color:#C0392B}
+.confirm-modal p{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:8px}
+.confirm-warn{background:#FDF0EF;border:1px solid #E8B4B0;border-radius:8px;padding:10px 14px;font-size:12px;color:#C0392B;margin-bottom:20px;line-height:1.6}
+.confirm-btns{display:flex;gap:10px}
+.btn-confirm-delete{flex:1;padding:10px;border-radius:8px;background:#C0392B;color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font)}
+.btn-confirm-delete:hover{background:#A93226}
+.btn-confirm-cancel{flex:1;padding:10px;border-radius:8px;background:transparent;color:var(--ink2);border:1px solid var(--border);font-size:13px;cursor:pointer;font-family:var(--font)}
+
 /* Footer RGPD */
 .app-footer{padding:8px 28px;border-top:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;font-size:11px;color:var(--ink3)}
 .app-footer a{color:var(--ink3);text-decoration:underline;cursor:pointer}
@@ -308,6 +334,60 @@ textarea.inp::placeholder{color:var(--ink3)}
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
       <button class="btn-save" onclick="saveProfil()">Enregistrer</button>
     </div>
+    <button class="btn-delete" onclick="openConfirmDelete()">🗑 Supprimer toutes mes données</button>
+  </div>
+</div>
+
+<!-- Modal confirmation suppression -->
+<div class="overlay" id="confirm-overlay">
+  <div class="confirm-modal">
+    <h2>⚠️ Supprimer mes données</h2>
+    <p>Vous êtes sur le point de supprimer <strong>toutes vos données</strong> enregistrées sur cet appareil :</p>
+    <div class="confirm-warn">
+      ⚠️ <strong>Cette action est définitive et irréversible.</strong><br>
+      Votre profil entreprise, vos compteurs de documents et vos préférences seront effacés. Assurez-vous de ne pas cliquer par erreur.
+    </div>
+    <div class="confirm-btns">
+      <button class="btn-confirm-cancel" onclick="closeConfirmDelete()">Annuler</button>
+      <button class="btn-confirm-delete" onclick="deleteAllData()">Oui, tout supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal RGPD -->
+<div class="overlay" id="rgpd-overlay">
+  <div class="rgpd-modal">
+    <h2>🔒 Politique de confidentialité</h2>
+    <div class="rgpd-sub">Dernière mise à jour : avril 2025</div>
+    <div class="rgpd-badge">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.5 5.5-4 4a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7 9.293l3.646-3.647a.5.5 0 0 1 .708.708z"/></svg>
+      Vos données restent sur votre appareil
+    </div>
+    <div class="rgpd-section">
+      <h3>Qui sommes-nous</h3>
+      <p>artisanAI est un outil d'assistance administrative destiné aux artisans et TPE français. Il vous aide à générer rapidement vos devis, factures et relances.</p>
+    </div>
+    <div class="rgpd-section">
+      <h3>Quelles informations sont utilisées</h3>
+      <p>Les informations que vous saisissez — nom de votre entreprise, coordonnées, numéros de documents — ainsi que les descriptions que vous tapez ou dictez pour créer vos documents.</p>
+    </div>
+    <div class="rgpd-section">
+      <h3>Où sont enregistrées vos données</h3>
+      <p>Toutes vos informations (profil entreprise, compteurs de numérotation) sont enregistrées <strong>uniquement sur votre téléphone ou ordinateur</strong>. Aucune donnée n'est envoyée sur un serveur ni conservée par artisanAI.</p>
+    </div>
+    <div class="rgpd-section">
+      <h3>Ce qui est transmis pour générer vos documents</h3>
+      <p>Quand vous décrivez un document, votre message est transmis de façon sécurisée à un service d'intelligence artificielle pour générer le devis ou la facture. Ce message n'est <strong>pas conservé ni réutilisé</strong> une fois le document créé.</p>
+    </div>
+    <div class="rgpd-section">
+      <h3>Vos droits</h3>
+      <p>Vous pouvez à tout moment supprimer l'ensemble de vos données en cliquant sur <strong>"Supprimer mes données"</strong> dans la section <em>Mon entreprise</em>. Cette action effacera toutes les informations enregistrées sur votre appareil.</p>
+    </div>
+    <div class="rgpd-section">
+      <h3>Nous contacter</h3>
+      <p>Pour toute question relative à vos données personnelles, contactez-nous à : <strong>contact@artisanai.fr</strong> <em style="color:var(--ink3);font-size:11px">(adresse en cours d'activation)</em></p>
+    </div>
+    <button class="rgpd-close" onclick="closeRgpd()">Fermer</button>
   </div>
 </div>
 
@@ -509,6 +589,10 @@ textarea.inp::placeholder{color:var(--ink3)}
       </div>
     </div>
   </div>
+  <div class="app-footer">
+    <span>© 2025 artisanAI — Vos données restent sur votre appareil</span>
+    <a onclick="openRgpd()">Politique de confidentialité</a>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -559,9 +643,25 @@ function saveProfil() {
 
 function openModal() { fillModal(); document.getElementById('overlay').classList.add('open'); }
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function openRgpd() { document.getElementById('rgpd-overlay').classList.add('open'); }
+function closeRgpd() { document.getElementById('rgpd-overlay').classList.remove('open'); }
+function openConfirmDelete() { closeModal(); document.getElementById('confirm-overlay').classList.add('open'); }
+function closeConfirmDelete() { document.getElementById('confirm-overlay').classList.remove('open'); }
+function deleteAllData() {
+  localStorage.clear();
+  closeConfirmDelete();
+  profil = {};
+  document.getElementById('avatar-initials').textContent = '?';
+  document.getElementById('user-display-name').textContent = 'Mon entreprise';
+  document.getElementById('user-display-meta').textContent = 'Mon entreprise';
+  document.getElementById('profil-bar').classList.remove('hidden');
+  toast('Toutes vos données ont été supprimées.');
+}
 function openDrawer() { document.getElementById('mobile-drawer').classList.add('open'); }
 function closeDrawer() { document.getElementById('mobile-drawer').classList.remove('open'); }
 document.getElementById('overlay').addEventListener('click', e => { if(e.target === document.getElementById('overlay')) closeModal(); });
+document.getElementById('rgpd-overlay').addEventListener('click', e => { if(e.target === document.getElementById('rgpd-overlay')) closeRgpd(); });
+document.getElementById('confirm-overlay').addEventListener('click', e => { if(e.target === document.getElementById('confirm-overlay')) closeConfirmDelete(); });
 
 // ── Stats ──
 let totalCA = 0, totalDocs = 0, totalDevis = 0;
