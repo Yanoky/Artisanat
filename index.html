@@ -345,6 +345,10 @@ textarea.inp::placeholder{color:var(--ink3)}
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="10" height="12" rx="1.5"/><path d="M5.5 5h5M5.5 7.5h5M5.5 10h3"/></svg>
     Documents
   </button>
+  <button onclick="openHelp()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6.5 6a1.5 1.5 0 0 1 3 .5c0 1-1.5 1.5-1.5 2.5"/><circle cx="8" cy="12" r=".6" fill="currentColor" stroke="none"/></svg>
+    Guide
+  </button>
   <button onclick="openModal()">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
     Mon entreprise
@@ -770,7 +774,7 @@ const SLIDES = [
   {
     icon: '👋',
     title: 'Bienvenue sur artisanAI',
-    text: 'Votre assistant administratif intelligent. Générez vos <strong>devis, factures et relances</strong> en quelques secondes, simplement en décrivant ce dont vous avez besoin.',
+    text: 'Votre assistant administratif intelligent. Générez vos <strong>devis, factures et relances</strong> en quelques secondes, simplement en décrivant ce dont vous avez besoin.<br><br><span style="font-size:12px;color:var(--ink3)">💡 Vous pourrez retrouver ce guide à tout moment :<br>• Sur <strong style="color:var(--ink)">ordinateur</strong> — bouton <strong style="color:var(--ink)">Guide</strong> en haut à droite<br>• Sur <strong style="color:var(--ink)">smartphone</strong> — bouton <strong style="color:var(--ink)">Guide</strong> dans la barre du haut</span>',
     examples: null
   },
   {
@@ -786,7 +790,7 @@ const SLIDES = [
   {
     icon: '🎙',
     title: 'Ou dictez vocalement',
-    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. L\'assistant transcrit et génère votre document instantanément.',
+    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. <strong>Commencez également par le type de document</strong> — "Devis...", "Facture...", "Relance..." — pour une numérotation automatique correcte.',
     examples: null,
     cta: 'Commencer'
   }
