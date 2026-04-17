@@ -265,6 +265,7 @@ textarea.inp::placeholder{color:var(--ink3)}
     </div>
     <div class="onboard-btns">
       <button class="onboard-skip" onclick="closeOnboard()">Passer</button>
+      <button class="onboard-skip" id="onboard-prev-btn" onclick="prevSlide()" style="display:none">← Précédent</button>
       <button class="onboard-next" id="onboard-next-btn" onclick="nextSlide()">Suivant →</button>
     </div>
   </div>
@@ -773,9 +774,9 @@ const SLIDES = [
     examples: null
   },
   {
-    icon: '💬',
-    title: 'Parlez naturellement',
-    text: 'Décrivez votre besoin comme à un collègue. <strong>Commencez toujours par le type de document</strong> pour une numérotation automatique correcte.',
+    icon: '⌨️',
+    title: 'Tapez votre demande',
+    text: 'Écrivez dans la <strong>barre de saisie en bas</strong> comme un message. Commencez toujours par le type de document pour une numérotation automatique correcte.',
     examples: [
       '📄 <strong>Devis</strong> pose carrelage M. Martin, 15m², grès cérame...',
       '🧾 <strong>Facture</strong> remplacement chauffe-eau Mme Dupuis, Thermor 200L...',
@@ -784,8 +785,8 @@ const SLIDES = [
   },
   {
     icon: '🎙',
-    title: 'Dictée vocale incluse',
-    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro</strong> dans la barre de saisie et dictez directement. L\'assistant transcrit et génère votre document instantanément.',
+    title: 'Ou dictez vocalement',
+    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. L\'assistant transcrit et génère votre document instantanément.',
     examples: null,
     cta: 'Commencer'
   }
@@ -806,6 +807,11 @@ function renderSlide(idx) {
     d.classList.toggle('active', i === idx);
   });
   document.getElementById('onboard-next-btn').textContent = s.cta ? s.cta : 'Suivant →';
+  document.getElementById('onboard-prev-btn').style.display = idx > 0 ? 'inline-flex' : 'none';
+}
+
+function prevSlide() {
+  if (currentSlide > 0) { currentSlide--; renderSlide(currentSlide); }
 }
 
 function nextSlide() {
