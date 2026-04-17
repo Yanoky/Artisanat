@@ -1022,7 +1022,7 @@ const SLIDES = [
   {
     icon: '🎙',
     title: 'Ou dictez vocalement',
-    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. <strong>Commencez également par le type de document</strong> — "Devis...", "Facture...", "Relance..." — pour une numérotation automatique correcte.',
+    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. <strong>Commencez par le type de document</strong> — "Devis...", "Facture...", "Relance..."<br><br><span style="font-size:12px;color:var(--ink3)">🛑 Pour arrêter la dictée :<br>• Dites <strong style="color:var(--ink)">"Terminé"</strong> ou <strong style="color:var(--ink)">"Stop"</strong> à la fin de votre message<br>• Ou cliquez à nouveau sur le bouton micro 🎙<br>• La dictée s\'arrête automatiquement après <strong style="color:var(--ink)">60 secondes</strong></span>',
     examples: null,
   },
   {
@@ -1094,37 +1094,68 @@ function getNextNumero(type) {
 }
 
 // ── Dictée vocale ──
-let recognition = null, isRecording = false;
+let recognition = null, isRecording = false, micTimer = null;
+const STOP_WORDS = ['terminé', 'termine', 'stop', 'fin', 'arrêt', 'arrête'];
 
 function toggleMic() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) { toast('Dictée non supportée sur ce navigateur'); return; }
-  if (isRecording) {
-    recognition.stop();
-    return;
-  }
+  if (isRecording) { stopMic(); return; }
+
   recognition = new SpeechRecognition();
   recognition.lang = 'fr-FR';
-  recognition.continuous = false;
+  recognition.continuous = true;
   recognition.interimResults = false;
+
   recognition.onstart = () => {
     isRecording = true;
     document.getElementById('mic-btn').classList.add('recording');
-    toast('🎙 Parlez...');
+    toast('🎙 Parlez... Dites "Terminé" ou "Stop" pour finir');
+    // Timeout 60 secondes
+    micTimer = setTimeout(() => {
+      stopMic();
+      toast('⏱ Dictée arrêtée automatiquement après 60 secondes');
+    }, 60000);
   };
+
   recognition.onresult = (e) => {
-    const txt = e.results[0][0].transcript;
     const inp = document.getElementById('inp');
-    inp.value = (inp.value ? inp.value + ' ' : '') + txt;
-    autoResize(inp);
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (!e.results[i].isFinal) continue;
+      const txt = e.results[i][0].transcript.trim();
+      const txtLower = txt.toLowerCase().replace(/[.,!?]/g, '').trim();
+      // Détecter mot d'arrêt
+      if (STOP_WORDS.includes(txtLower)) {
+        stopMic();
+        toast('✓ Dictée terminée');
+        return;
+      }
+      inp.value = (inp.value ? inp.value + ' ' : '') + txt;
+      autoResize(inp);
+    }
     inp.focus();
   };
-  recognition.onerror = () => { toast('Erreur micro — vérifiez les permissions'); };
-  recognition.onend = () => {
-    isRecording = false;
-    document.getElementById('mic-btn').classList.remove('recording');
+
+  recognition.onerror = (e) => {
+    if (e.error !== 'no-speech') toast('Erreur micro — vérifiez les permissions');
+    stopMic();
   };
+
+  recognition.onend = () => {
+    // Redémarrer automatiquement si toujours en mode enregistrement (évite la coupure automatique)
+    if (isRecording) {
+      try { recognition.start(); } catch(e) { stopMic(); }
+    }
+  };
+
   recognition.start();
+}
+
+function stopMic() {
+  isRecording = false;
+  if (micTimer) { clearTimeout(micTimer); micTimer = null; }
+  if (recognition) { try { recognition.stop(); } catch(e) {} }
+  document.getElementById('mic-btn').classList.remove('recording');
 }
 
 loadProfil();
