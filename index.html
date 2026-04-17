@@ -304,6 +304,7 @@ textarea.inp::placeholder{color:var(--ink3)}
       <div class="onboard-dot" id="dot-2"></div>
       <div class="onboard-dot" id="dot-3"></div>
       <div class="onboard-dot" id="dot-4"></div>
+      <div class="onboard-dot" id="dot-5"></div>
     </div>
     <div class="onboard-btns">
       <button class="onboard-skip" onclick="closeOnboard()">Passer</button>
@@ -342,10 +343,14 @@ textarea.inp::placeholder{color:var(--ink3)}
 <div class="overlay" id="confirm-overlay">
   <div class="confirm-modal">
     <h2>⚠️ Supprimer mes données</h2>
-    <p>Vous êtes sur le point de supprimer <strong>toutes vos données</strong> enregistrées sur cet appareil :</p>
+    <p>Vous êtes sur le point de supprimer <strong>définitivement</strong> les éléments suivants :</p>
     <div class="confirm-warn">
+      🏢 Informations de votre entreprise (nom, SIRET, adresse, coordonnées...)<br>
+      👤 Coordonnées et informations de vos clients<br>
+      📄 Compteurs de numérotation (devis et factures)<br>
+      ⚙️ Préférences et paramètres de l'application<br><br>
       ⚠️ <strong>Cette action est définitive et irréversible.</strong><br>
-      Votre profil entreprise, vos compteurs de documents et vos préférences seront effacés. Assurez-vous de ne pas cliquer par erreur.
+      Assurez-vous de ne pas cliquer par erreur.
     </div>
     <div class="confirm-btns">
       <button class="btn-confirm-cancel" onclick="closeConfirmDelete()">Annuler</button>
@@ -921,6 +926,12 @@ const SLIDES = [
     icon: '🎙',
     title: 'Ou dictez vocalement',
     text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. <strong>Commencez également par le type de document</strong> — "Devis...", "Facture...", "Relance..." — pour une numérotation automatique correcte.',
+    examples: null,
+  },
+  {
+    icon: '🗑',
+    title: 'Supprimer vos données',
+    text: 'Vous pouvez à tout moment supprimer toutes vos données enregistrées sur cet appareil.<br><br><span style="font-size:12px;color:var(--ink3)">📍 Où le faire :<br>• Cliquez sur <strong style="color:var(--ink)">Mon entreprise</strong> → faites défiler jusqu\'en bas → bouton <strong style="color:#C0392B">Supprimer mes données</strong><br><br>⚠️ Cette action supprimera définitivement :<br>• Les informations de votre entreprise<br>• Les coordonnées de vos clients<br>• Les compteurs de numérotation<br>• Toutes vos préférences</span>',
     examples: null,
     cta: 'Commencer'
   }
