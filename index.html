@@ -120,6 +120,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14p
 .dbp:hover{background:#D0ECD9}
 .dbg{background:transparent;color:var(--ink2);border:1px solid var(--border)}
 .dbg:hover{border-color:var(--accent);color:var(--accent)}
+.dbavo{background:var(--blue-l);color:var(--blue);border:1px solid #A8C8F0}
+.dbavo:hover{background:#D4E8FC}
+.dbannul{background:transparent;color:#C0392B;border:1px solid #E8B4B0}
+.dbannul:hover{background:#FDF0EF}
+.bavo{background:#E8F0FB;color:var(--blue)}
+.doc-card.annule{opacity:.6}
+.annule-banner{background:#FDF0EF;border-top:1px solid #E8B4B0;padding:8px 14px;font-size:11px;color:#C0392B;font-weight:500;text-align:center}
 
 /* Client coords in doc card header */
 .client-info{font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.5;text-align:right}
@@ -541,6 +548,7 @@ textarea.inp::placeholder{color:var(--ink3)}
           <span class="q" onclick="fire('Facture remplacement chauffe-eau Mme Dupuis, Thermor 200L + pose 2h')">Facture chauffe-eau</span>
           <span class="q" onclick="fire('Devis pose carrelage salle de bain M. Moreau, 12m², grès cérame haut de gamme + main d\'œuvre')">Devis carrelage</span>
           <span class="q" onclick="fire('Relance facture impayée M. Bernard 890€, 38 jours de retard, ton ferme')">Relance impayée</span>
+          <span class="q" onclick="fire('Avoir sur facture FAC-2025-001 M. Dupont, annulation prestation suite à erreur de facturation')">Avoir</span>
         </div>
         <div class="msgs" id="msgs">
           <div class="msg">
@@ -551,7 +559,8 @@ textarea.inp::placeholder{color:var(--ink3)}
               <span style="color:var(--ink3);font-size:12px">
               📄 <strong style="color:var(--ink)">Devis</strong> → "Devis pose carrelage M. Martin, 15m²..."<br>
               🧾 <strong style="color:var(--ink)">Facture</strong> → "Facture remplacement chauffe-eau Mme Dupuis..."<br>
-              ✉️ <strong style="color:var(--ink)">Relance</strong> → "Relance impayée M. Bernard 890€, 30 jours de retard..."
+              ✉️ <strong style="color:var(--ink)">Relance</strong> → "Relance impayée M. Bernard 890€, 30 jours de retard..."<br>
+              ↩️ <strong style="color:var(--ink)">Avoir</strong> → "Avoir sur facture FAC-2025-001 M. Martin, annulation prestation..."
               </span>
               </div>
             </div>
@@ -700,8 +709,10 @@ async function callAI(txt) {
   // Détecter le type pour pré-générer le numéro
   const isFacture = /facture|avoir/i.test(txt);
   const isDevis = /devis/i.test(txt);
+  const isAvoir = /avoir/i.test(txt);
   let numeroHint = '';
-  if (isDevis) numeroHint = ` [numéro à utiliser: ${getNextNumero('devis')}]`;
+  if (isAvoir) numeroHint = ` [numéro à utiliser: ${getNextNumero('avoir')}]`;
+  else if (isDevis) numeroHint = ` [numéro à utiliser: ${getNextNumero('devis')}]`;
   else if (isFacture) numeroHint = ` [numéro à utiliser: ${getNextNumero('facture')}]`;
 
   const msgAvecNumero = numeroHint ? txt + numeroHint : txt;
@@ -729,7 +740,7 @@ async function send() {
     const r = await callAI(txt);
     removeTyping();
     addAI(r.intro);
-    if(r.type==='devis'||r.type==='facture') { renderDoc(r); addToList(r); updateStats(r); }
+    if(r.type==='devis'||r.type==='facture'||r.type==='avoir') { renderDoc(r); addToList(r); updateStats(r); }
     else if(r.type==='relance') { renderEmail(r); addToList(r); updateStats(r); }
   } catch(e) {
     removeTyping();
@@ -822,7 +833,7 @@ function generatePDF() {
 
 function renderDoc(r) {
   lastDoc = r;
-  const d = r.document, isD = r.type === 'devis';
+  const d = r.document, isD = r.type === 'devis', isA = r.type === 'avoir';
   const tva = d.tauxTVA ?? (d.totalHT > 0 ? Math.round(d.tva/d.totalHT*1000)/10 : 10);
   const rows = d.lignes.map(l => `<div class="dline"><span class="dl-desc">${esc(l.description)}</span><span class="dl-qty">${l.quantite} ${esc(l.unite)}</span><span class="dl-amt">${fmt(l.total)}</span></div>`).join('');
 
@@ -834,10 +845,24 @@ function renderDoc(r) {
     ? `<div class="client-info">${coordParts.map(esc).join('<br>')}</div>`
     : '';
 
+  // Badge couleur selon type
+  const badgeClass = isD ? 'bd' : isA ? 'bavo' : 'bfa';
+  const badgeLabel = isD ? 'Devis' : isA ? 'Avoir' : 'Facture';
+
+  // Boutons selon type
+  let actionBtns = `<button class="db dbp" onclick="toast('Email envoyé !')">✓ Envoyer par email</button>
+      <button class="db dbg" onclick="generatePDF()">Télécharger PDF</button>
+      <button class="db dbg" onclick="edit()">Modifier</button>`;
+  if (isD) {
+    actionBtns += `<button class="db dbannul" onclick="confirmCancelDevis(this)">Annuler le devis</button>`;
+  } else if (!isA) {
+    actionBtns += `<button class="db dbavo" onclick="genAvoir('${esc(d.numero)}','${esc(c.nom||'')}')">Générer un avoir</button>`;
+  }
+
   const el = mk('div','msg');
-  el.innerHTML = `<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc-card">
+  el.innerHTML = `<div class="av av-ai">AI</div><div class="mbody" style="flex:1"><div class="doc-card" id="doc-${Date.now()}">
     <div class="doc-head">
-      <div><span class="dbadge ${isD?'bd':'bfa'}">${isD?'Devis':'Facture'}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div>
+      <div><span class="dbadge ${badgeClass}">${badgeLabel}</span><div class="dnum">${esc(d.numero)} · ${esc(d.date)}</div></div>
       <div style="text-align:right"><div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(c.nom||d.client?.nom||'')}</div>${clientCoords}</div>
     </div>
     <div class="doc-body">
@@ -849,11 +874,7 @@ function renderDoc(r) {
         <div class="trow"><span>Total TTC</span><span class="tv">${fmt(d.totalTTC)}</span></div>
       </div>
     </div>
-    <div class="doc-actions">
-      <button class="db dbp" onclick="toast('Email envoyé !')">✓ Envoyer par email</button>
-      <button class="db dbg" onclick="generatePDF()">Télécharger PDF</button>
-      <button class="db dbg" onclick="edit()">Modifier</button>
-    </div>
+    <div class="doc-actions">${actionBtns}</div>
   </div></div>`;
   app(el);
 }
@@ -888,6 +909,26 @@ function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function genAvoir(numFacture, nomClient) {
+  const txt = `Avoir sur facture ${numFacture}${nomClient ? ' pour ' + nomClient : ''}, annulation totale de la facture`;
+  document.getElementById('inp').value = txt;
+  send();
+}
+
+function confirmCancelDevis(btn) {
+  const card = btn.closest('.doc-card');
+  if (!confirm('⚠️ Êtes-vous sûr de vouloir annuler ce devis ?\n\nCette action est définitive — le devis sera marqué comme annulé.')) return;
+  // Marquer la carte comme annulée
+  card.classList.add('annule');
+  const actions = card.querySelector('.doc-actions');
+  actions.innerHTML = '<div style="font-size:12px;color:#C0392B;font-weight:500;padding:4px 0">✕ Devis annulé</div>';
+  const banner = document.createElement('div');
+  banner.className = 'annule-banner';
+  banner.textContent = '✕ Ce devis a été annulé';
+  card.appendChild(banner);
+  toast('Devis annulé.');
+}
+
 function edit(){document.getElementById('inp').value='Modifie le document : ';document.getElementById('inp').focus();}
 
 // ── Onboarding ──
@@ -989,11 +1030,11 @@ function initOnboard() {
 // ── Numérotation séquentielle ──
 function getNextNumero(type) {
   const year = new Date().getFullYear();
-  const key = type === 'devis' ? 'artisanai_counter_devis' : 'artisanai_counter_facture';
+  const key = type === 'devis' ? 'artisanai_counter_devis' : type === 'avoir' ? 'artisanai_counter_avoir' : 'artisanai_counter_facture';
   const current = parseInt(localStorage.getItem(key) || '0') + 1;
   localStorage.setItem(key, current);
   const pad = String(current).padStart(3, '0');
-  return type === 'devis' ? `DEV-${year}-${pad}` : `FAC-${year}-${pad}`;
+  return type === 'devis' ? `DEV-${year}-${pad}` : type === 'avoir' ? `AVO-${year}-${pad}` : `FAC-${year}-${pad}`;
 }
 
 // ── Dictée vocale ──
