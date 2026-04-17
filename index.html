@@ -633,7 +633,7 @@ function generatePDF() {
 function renderDoc(r) {
   lastDoc = r;
   const d = r.document, isD = r.type === 'devis';
-  const tva = d.totalHT > 0 ? Math.round(d.tva/d.totalHT*1000)/10 : 10;
+  const tva = d.tauxTVA ?? (d.totalHT > 0 ? Math.round(d.tva/d.totalHT*1000)/10 : 10);
   const rows = d.lignes.map(l => `<div class="dline"><span class="dl-desc">${esc(l.description)}</span><span class="dl-qty">${l.quantite} ${esc(l.unite)}</span><span class="dl-amt">${fmt(l.total)}</span></div>`).join('');
 
   // ── Coordonnées client dans la carte ──
