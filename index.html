@@ -939,12 +939,11 @@ function sendEmail(docIndex) {
   const subject = encodeURIComponent(`${typeLabel} ${d.numero} — ${p.nom || 'Votre artisan'}`);
 
   const lignesTexte = d.lignes.map(l => `- ${l.description} : ${Number(l.total).toLocaleString('fr-FR')} €`).join('\n');
+  const signature = [p.dirigeant || p.nom || '', p.forme || '', p.adresse || '', p.tel || '', p.email || '', p.siret ? 'SIRET : ' + p.siret : ''].filter(Boolean).join('\n');
   const body = encodeURIComponent(
 `Bonjour ${c.nom ? c.nom : ''},
 
 Veuillez trouver ci-joint votre ${typeLabel.toLowerCase()} n° ${d.numero} du ${d.date}.
-
-Objet : ${d.objet}
 
 ${lignesTexte}
 
@@ -954,11 +953,10 @@ Total TTC : ${Number(d.totalTTC).toLocaleString('fr-FR')} €
 
 ${r.type === 'devis' ? 'Ce devis est valable 3 mois. Pour acceptation, merci de nous retourner ce document signé.' : r.type === 'avoir' ? 'Cet avoir sera déduit de votre prochaine facture ou remboursé selon votre convenance.' : 'Règlement à réception de la présente facture.'}
 
+⚠️ Pensez à joindre le PDF avant d'envoyer.
+
 Cordialement,
-${p.dirigeant || p.nom || ''}
-${p.tel || ''}
-${p.email || ''}
-${p.nom || ''}`
+${signature}`
   );
 
   window.open(`mailto:${to}?subject=${subject}&body=${body}`, '_self');
