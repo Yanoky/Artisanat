@@ -196,6 +196,27 @@ textarea.inp::placeholder{color:var(--ink3)}
 .btn-save:hover{background:var(--accent-d)}
 .btn-cancel{padding:10px 16px;border-radius:8px;background:transparent;color:var(--ink2);border:1px solid var(--border);font-size:13px;cursor:pointer;font-family:var(--font)}
 
+/* Onboarding */
+.onboard-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:16px}
+.onboard-overlay.open{display:flex}
+.onboard-card{background:var(--card);border-radius:20px;padding:40px 36px 28px;width:100%;max-width:480px;text-align:center;position:relative;animation:up .3s ease}
+.onboard-logo{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.4px;margin-bottom:28px}
+.onboard-logo em{color:var(--accent);font-style:normal}
+.onboard-icon{font-size:42px;margin-bottom:16px}
+.onboard-title{font-size:19px;font-weight:600;color:var(--ink);margin-bottom:10px;letter-spacing:-.2px}
+.onboard-text{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:28px}
+.onboard-text strong{color:var(--ink)}
+.onboard-examples{background:var(--bg);border-radius:10px;padding:14px 16px;text-align:left;margin-bottom:24px;font-size:12px;color:var(--ink2);line-height:2}
+.onboard-examples span{display:block}
+.onboard-dots{display:flex;justify-content:center;gap:6px;margin-bottom:24px}
+.onboard-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .2s}
+.onboard-dot.active{background:var(--accent);width:20px;border-radius:4px}
+.onboard-btns{display:flex;gap:10px;justify-content:center}
+.onboard-next{flex:1;padding:11px;border-radius:9px;background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:background .15s}
+.onboard-next:hover{background:var(--accent-d)}
+.onboard-skip{padding:11px 16px;border-radius:9px;background:transparent;color:var(--ink3);border:1px solid var(--border);font-size:13px;cursor:pointer;font-family:var(--font)}
+.onboard-skip:hover{color:var(--ink2)}
+
 /* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--green);color:#fff;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:500;opacity:0;transition:all .25s;pointer-events:none;z-index:200}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -231,6 +252,23 @@ textarea.inp::placeholder{color:var(--ink3)}
 </style>
 </head>
 <body>
+
+<!-- Onboarding -->
+<div class="onboard-overlay" id="onboard-overlay">
+  <div class="onboard-card" id="onboard-card">
+    <div class="onboard-logo">artisan<em>AI</em></div>
+    <div id="onboard-content"></div>
+    <div class="onboard-dots">
+      <div class="onboard-dot active" id="dot-0"></div>
+      <div class="onboard-dot" id="dot-1"></div>
+      <div class="onboard-dot" id="dot-2"></div>
+    </div>
+    <div class="onboard-btns">
+      <button class="onboard-skip" onclick="closeOnboard()">Passer</button>
+      <button class="onboard-next" id="onboard-next-btn" onclick="nextSlide()">Suivant →</button>
+    </div>
+  </div>
+</div>
 
 <!-- Modal profil -->
 <div class="overlay" id="overlay">
@@ -337,6 +375,10 @@ textarea.inp::placeholder{color:var(--ink3)}
   <div class="topbar">
     <div class="page-title">Assistant IA</div>
     <div class="topbar-right">
+      <button class="btn btn-ghost" onclick="openHelp()" title="Guide d'utilisation">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6.5 6a1.5 1.5 0 0 1 3 .5c0 1-1.5 1.5-1.5 2.5"/><circle cx="8" cy="12" r=".6" fill="currentColor" stroke="none"/></svg>
+        Guide
+      </button>
       <button class="btn btn-profil" onclick="openModal()">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
         Mon entreprise
@@ -722,6 +764,77 @@ function autoResize(el){el.style.height='';el.style.height=Math.min(el.scrollHei
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function edit(){document.getElementById('inp').value='Modifie le document : ';document.getElementById('inp').focus();}
 
+// ── Onboarding ──
+const SLIDES = [
+  {
+    icon: '👋',
+    title: 'Bienvenue sur artisanAI',
+    text: 'Votre assistant administratif intelligent. Générez vos <strong>devis, factures et relances</strong> en quelques secondes, simplement en décrivant ce dont vous avez besoin.',
+    examples: null
+  },
+  {
+    icon: '💬',
+    title: 'Parlez naturellement',
+    text: 'Décrivez votre besoin comme à un collègue. <strong>Commencez toujours par le type de document</strong> pour une numérotation automatique correcte.',
+    examples: [
+      '📄 <strong>Devis</strong> pose carrelage M. Martin, 15m², grès cérame...',
+      '🧾 <strong>Facture</strong> remplacement chauffe-eau Mme Dupuis, Thermor 200L...',
+      '✉️ <strong>Relance</strong> impayée M. Bernard 890€, 30 jours de retard...'
+    ]
+  },
+  {
+    icon: '🎙',
+    title: 'Dictée vocale incluse',
+    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro</strong> dans la barre de saisie et dictez directement. L\'assistant transcrit et génère votre document instantanément.',
+    examples: null,
+    cta: 'Commencer'
+  }
+];
+
+let currentSlide = 0;
+
+function renderSlide(idx) {
+  const s = SLIDES[idx];
+  let html = `<div class="onboard-icon">${s.icon}</div>
+    <div class="onboard-title">${s.title}</div>
+    <div class="onboard-text">${s.text}</div>`;
+  if (s.examples) {
+    html += `<div class="onboard-examples">${s.examples.map(e => `<span>${e}</span>`).join('')}</div>`;
+  }
+  document.getElementById('onboard-content').innerHTML = html;
+  document.querySelectorAll('.onboard-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+  });
+  document.getElementById('onboard-next-btn').textContent = s.cta ? s.cta : 'Suivant →';
+}
+
+function nextSlide() {
+  if (currentSlide < SLIDES.length - 1) {
+    currentSlide++;
+    renderSlide(currentSlide);
+  } else {
+    closeOnboard();
+  }
+}
+
+function closeOnboard() {
+  document.getElementById('onboard-overlay').classList.remove('open');
+  localStorage.setItem('artisanai_onboarded', '1');
+}
+
+function openHelp() {
+  currentSlide = 0;
+  renderSlide(0);
+  document.getElementById('onboard-overlay').classList.add('open');
+}
+
+function initOnboard() {
+  if (!localStorage.getItem('artisanai_onboarded')) {
+    renderSlide(0);
+    document.getElementById('onboard-overlay').classList.add('open');
+  }
+}
+
 // ── Numérotation séquentielle ──
 function getNextNumero(type) {
   const year = new Date().getFullYear();
@@ -767,6 +880,7 @@ function toggleMic() {
 }
 
 loadProfil();
+initOnboard();
 </script>
 </body>
 </html>
