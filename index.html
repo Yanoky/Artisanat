@@ -51,6 +51,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14p
 .btn-ghost:hover{background:var(--bg);color:var(--ink)}
 .btn-profil{background:transparent;color:var(--ink2);border:1px solid var(--border);font-size:12px;padding:6px 12px}
 .btn-profil:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:768px){.btn-profil{display:none}.btn-ghost.guide-btn{display:none}}
 
 /* Content */
 .content{flex:1;overflow-y:auto;padding:24px 28px}
@@ -395,7 +396,7 @@ textarea.inp::placeholder{color:var(--ink3)}
   <div class="topbar">
     <div class="page-title">Assistant IA</div>
     <div class="topbar-right">
-      <button class="btn btn-ghost" onclick="openHelp()" title="Guide d'utilisation">
+      <button class="btn btn-ghost guide-btn" onclick="openHelp()" title="Guide d'utilisation">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6.5 6a1.5 1.5 0 0 1 3 .5c0 1-1.5 1.5-1.5 2.5"/><circle cx="8" cy="12" r=".6" fill="currentColor" stroke="none"/></svg>
         Guide
       </button>
