@@ -1022,7 +1022,7 @@ const SLIDES = [
   {
     icon: '🎙',
     title: 'Ou dictez vocalement',
-    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. <strong>Commencez par le type de document</strong> — "Devis...", "Facture...", "Relance..."<br><br><span style="font-size:12px;color:var(--ink3)">🛑 Pour arrêter la dictée :<br>• Dites <strong style="color:var(--ink)">"Terminé"</strong> ou <strong style="color:var(--ink)">"Stop"</strong> à la fin de votre message<br>• Ou cliquez à nouveau sur le bouton micro 🎙<br>• La dictée s\'arrête automatiquement après <strong style="color:var(--ink)">60 secondes</strong></span>',
+    text: 'Sur chantier, pas le temps de taper ? Cliquez sur le <strong>bouton micro 🎙</strong> à gauche de la barre de saisie et parlez directement. <strong>Commencez par le type de document</strong> — "Devis...", "Facture...", "Relance..."<br><br><span style="font-size:12px;color:var(--ink3)">🛑 Pour arrêter la dictée :<br>• Dites <strong style="color:var(--ink)">"Envoi"</strong> → arrête la dictée <strong style="color:var(--ink)">et envoie le message</strong><br>• Dites <strong style="color:var(--ink)">"Terminé"</strong> → arrête la dictée sans envoyer<br>• Ou cliquez à nouveau sur le bouton micro 🎙<br>• La dictée s\'arrête automatiquement après <strong style="color:var(--ink)">60 secondes</strong></span>',
     examples: null,
   },
   {
@@ -1095,7 +1095,8 @@ function getNextNumero(type) {
 
 // ── Dictée vocale ──
 let recognition = null, isRecording = false, micTimer = null;
-const STOP_WORDS = ['terminé', 'termine', 'stop', 'fin', 'arrêt', 'arrête'];
+const STOP_WORDS = ['terminé', 'termine', 'fin', 'arrêt', 'arrête'];
+const SEND_WORDS = ['envoi', 'envoyer', 'envoie'];
 
 function toggleMic() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1124,7 +1125,14 @@ function toggleMic() {
       if (!e.results[i].isFinal) continue;
       const txt = e.results[i][0].transcript.trim();
       const txtLower = txt.toLowerCase().replace(/[.,!?]/g, '').trim();
-      // Détecter mot d'arrêt
+      // Détecter mot d'envoi → arrêter + envoyer
+      if (SEND_WORDS.includes(txtLower)) {
+        stopMic();
+        toast('✓ Dictée terminée — envoi en cours...');
+        setTimeout(() => send(), 300);
+        return;
+      }
+      // Détecter mot d'arrêt simple
       if (STOP_WORDS.includes(txtLower)) {
         stopMic();
         toast('✓ Dictée terminée');
