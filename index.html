@@ -217,7 +217,20 @@ textarea.inp::placeholder{color:var(--ink3)}
 .onboard-skip{padding:11px 16px;border-radius:9px;background:transparent;color:var(--ink3);border:1px solid var(--border);font-size:13px;cursor:pointer;font-family:var(--font)}
 .onboard-skip:hover{color:var(--ink2)}
 
-/* Toast */
+/* Modal RGPD */
+.rgpd-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto}
+.rgpd-modal h2{font-size:17px;font-weight:600;margin-bottom:4px}
+.rgpd-modal .rgpd-sub{font-size:12px;color:var(--ink3);margin-bottom:20px}
+.rgpd-section{margin-bottom:18px}
+.rgpd-section h3{font-size:12px;font-weight:600;color:var(--ink);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.rgpd-section p{font-size:12px;color:var(--ink2);line-height:1.8}
+.rgpd-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-l);color:var(--green);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:16px}
+
+/* Footer RGPD */
+.app-footer{padding:8px 28px;border-top:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;font-size:11px;color:var(--ink3)}
+.app-footer a{color:var(--ink3);text-decoration:underline;cursor:pointer}
+.app-footer a:hover{color:var(--accent)}
+@media(max-width:768px){.app-footer{padding:6px 16px;font-size:10px}}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--green);color:#fff;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:500;opacity:0;transition:all .25s;pointer-events:none;z-index:200}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -262,6 +275,8 @@ textarea.inp::placeholder{color:var(--ink3)}
       <div class="onboard-dot active" id="dot-0"></div>
       <div class="onboard-dot" id="dot-1"></div>
       <div class="onboard-dot" id="dot-2"></div>
+      <div class="onboard-dot" id="dot-3"></div>
+      <div class="onboard-dot" id="dot-4"></div>
     </div>
     <div class="onboard-btns">
       <button class="onboard-skip" onclick="closeOnboard()">Passer</button>
@@ -774,13 +789,27 @@ const SLIDES = [
   {
     icon: '👋',
     title: 'Bienvenue sur artisanAI',
-    text: 'Votre assistant administratif intelligent. Générez vos <strong>devis, factures et relances</strong> en quelques secondes, simplement en décrivant ce dont vous avez besoin.<br><br><span style="font-size:12px;color:var(--ink3)">💡 Vous pourrez retrouver ce guide à tout moment :<br>• Sur <strong style="color:var(--ink)">ordinateur</strong> — bouton <strong style="color:var(--ink)">Guide</strong> en haut à droite<br>• Sur <strong style="color:var(--ink)">smartphone</strong> — bouton <strong style="color:var(--ink)">Guide</strong> dans la barre du haut</span>',
+    text: 'Votre assistant administratif intelligent. Générez vos <strong>devis, factures et relances</strong> en quelques secondes, simplement en décrivant ce dont vous avez besoin.<br><br><span style="font-size:12px;color:var(--ink3)">💡 Vous pourrez retrouver ce guide à tout moment :<br>• Sur <strong style="color:var(--ink)">ordinateur</strong> — bouton <strong style="color:var(--ink)">Guide</strong> en haut à droite<br>• Sur <strong style="color:var(--ink)">smartphone</strong> — bouton <strong style="color:var(--ink)">Guide</strong> dans la barre du bas</span>',
     examples: null
+  },
+  {
+    icon: '🏢',
+    title: 'Configurez votre entreprise',
+    text: 'Avant tout, renseignez les informations de votre entreprise <strong>une seule fois</strong> — elles apparaîtront automatiquement sur tous vos documents.<br><br><span style="font-size:12px;color:var(--ink3)">📍 Où le faire :<br>• Sur <strong style="color:var(--ink)">ordinateur</strong> — bouton <strong style="color:var(--ink)">Mon entreprise</strong> en haut à droite<br>• Sur <strong style="color:var(--ink)">smartphone</strong> — bouton <strong style="color:var(--ink)">Mon entreprise</strong> dans la barre du bas</span>',
+    examples: null
+  },
+  {
+    icon: '👤',
+    title: 'Coordonnées de vos clients',
+    text: 'Pour l\'instant, mentionnez les informations de votre client directement dans votre message — nom, adresse, email, téléphone.<br><br><span style="font-size:12px;color:var(--ink3)">🔜 <strong style="color:var(--ink)">Prochainement :</strong> un carnet clients vous permettra d\'enregistrer vos clients une fois pour toutes. Il suffira ensuite de mentionner leur nom pour que leurs coordonnées se remplissent automatiquement.</span>',
+    examples: [
+      '📄 Devis M. <strong>Martin Jean, 12 rue de la Paix 75001 Paris</strong>, pose carrelage...',
+    ]
   },
   {
     icon: '⌨️',
     title: 'Tapez votre demande',
-    text: 'Écrivez dans la <strong>barre de saisie en bas</strong> comme un message. Commencez toujours par le type de document pour une numérotation automatique correcte.',
+    text: 'Écrivez dans la <strong>barre de saisie en bas</strong> comme un message. <strong>Commencez toujours par le type de document</strong> pour une numérotation automatique correcte.',
     examples: [
       '📄 <strong>Devis</strong> pose carrelage M. Martin, 15m², grès cérame...',
       '🧾 <strong>Facture</strong> remplacement chauffe-eau Mme Dupuis, Thermor 200L...',
