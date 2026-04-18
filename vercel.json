@@ -1,7 +1,5 @@
 {
   "version": 2,
   "cleanUrls": false,
-  "errors": [
-    { "statusCode": 404, "source": "/404.html" }
-  ]
+  "notFound": "/404.html"
 }
