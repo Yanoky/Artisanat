@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page introuvable — artisanAI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F2ED;--card:#FFFFFF;
+  --ink:#1A1714;--ink2:#6B6560;--ink3:#A09990;
+  --accent:#D4470C;--accent-l:#FDEEE8;--accent-d:#B83C0A;
+  --border:#E8E3DC;
+  --font:'DM Sans',sans-serif;--serif:'DM Serif Display',serif;
+}
+html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--ink)}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;min-height:100vh}
+.logo{font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.3px;margin-bottom:48px;text-decoration:none;display:block}
+.logo em{color:var(--accent);font-style:normal}
+.code{font-family:var(--serif);font-size:120px;font-weight:400;color:var(--accent-l);line-height:1;letter-spacing:-4px;margin-bottom:8px}
+h1{font-family:var(--serif);font-size:32px;font-weight:400;color:var(--ink);margin-bottom:16px;letter-spacing:-.3px}
+p{font-size:15px;color:var(--ink2);line-height:1.7;max-width:400px;margin:0 auto 36px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;transition:background .15s}
+.btn:hover{background:var(--accent-d)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--ink2);padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;border:1px solid var(--border);transition:all .15s;margin-left:8px}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+footer{position:fixed;bottom:20px;font-size:11px;color:var(--ink3)}
+</style>
+</head>
+<body>
+  <a href="/index.html" class="logo">artisan<em>AI</em></a>
+  <div class="code">404</div>
+  <h1>Page introuvable</h1>
+  <p>Cette page n'existe pas ou a été déplacée. Revenez à l'accueil ou testez directement l'application.</p>
+  <div class="btns">
+    <a href="/index.html" class="btn">← Retour à l'accueil</a>
+    <a href="/app.html" class="btn-ghost">Tester l'application</a>
+  </div>
+  <footer>© 2025 artisanAI</footer>
+</body>
+</html>
