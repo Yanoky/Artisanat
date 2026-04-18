@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "cleanUrls": false
+  "cleanUrls": false,
+  "errors": [
+    { "statusCode": 404, "source": "/404.html" }
+  ]
 }
