@@ -346,7 +346,8 @@ footer a:hover{color:var(--accent)}
 <!-- DEMO -->
 <div class="section-outer" id="demo" style="scroll-margin-top: 80px;" style="padding-top:0">
   <div class="section-inner">
-    <div class="demo-wrap fade-up">
+    <div class="fade-up" style="margin-bottom:32px"><div class="section-label">Démo interactive</div><h2 class="section-title">Voyez comment ça marche.</h2></div>
+<div class="demo-wrap fade-up">
       <div class="demo-head">
         <div class="demo-dot"></div>
         <div>
@@ -491,51 +492,6 @@ footer a:hover{color:var(--accent)}
   </div>
 </div>
 
-<!-- TESTIMONIALS -->
-<div class="section-outer" id="temoignages" id="temoignages" id="temoignages" style="padding-top:0">
-  <div class="section-inner">
-    <div class="fade-up">
-      <div class="section-label">Ils utilisent artisanAI</div>
-      <h2 class="section-title">Ce que disent les artisans.</h2>
-    </div>
-    <div class="testimonials fade-up">
-      <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"Je faisais mes devis à la main depuis 12 ans. Maintenant je dicte depuis le van et c'est prêt avant d'arriver chez le client."</p>
-        <div class="testi-author">
-          <div class="testi-av" style="background:var(--accent)">PL</div>
-          <div>
-            <div class="testi-name">Pierre L.</div>
-            <div class="testi-meta">Électricien, Lyon</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"J'ai généré ma première facture en 30 secondes. Mon comptable n'en revenait pas de la mise en page professionnelle."</p>
-        <div class="testi-author">
-          <div class="testi-av" style="background:var(--blue)">SC</div>
-          <div>
-            <div class="testi-name">Sophie C.</div>
-            <div class="testi-meta">Carreleur, Bordeaux</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"Les relances automatiques m'ont permis de récupérer trois impayés en une semaine. Un outil simple qui fait vraiment la différence."</p>
-        <div class="testi-author">
-          <div class="testi-av" style="background:var(--green)">MR</div>
-          <div>
-            <div class="testi-name">Marc R.</div>
-            <div class="testi-meta">Plombier, Nantes</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- CTA -->
 <div class="section-outer" id="cta" id="cta" id="cta" style="padding-top:0">
   <div class="section-inner">
@@ -641,8 +597,8 @@ const sections = [
   {id: 'comment', prev: 'top', next: 'demo'},
   {id: 'demo', prev: 'comment', next: 'fonctionnalites'},
   {id: 'fonctionnalites', prev: 'demo', next: 'confidentialite'},
-  {id: 'confidentialite', prev: 'fonctionnalites', next: 'temoignages'},
-  {id: 'temoignages', prev: 'confidentialite', next: 'cta'},
+  {id: 'confidentialite', prev: 'fonctionnalites', next: 'cta'},
+  
   {id: 'cta', prev: 'temoignages', next: null},
 ];
 
