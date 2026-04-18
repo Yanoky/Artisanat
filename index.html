@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>artisanAI — Vos devis et factures en quelques secondes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F2ED;--card:#FFFFFF;--card2:#F9F7F4;
+  --ink:#1A1714;--ink2:#6B6560;--ink3:#A09990;
+  --accent:#D4470C;--accent-l:#FDEEE8;--accent-d:#B83C0A;
+  --green:#1A7A4A;--green-l:#E6F4EC;
+  --blue:#1B5FA8;--blue-l:#E8F0FB;
+  --amber:#C47D0A;--amber-l:#FDF3DC;
+  --border:#E8E3DC;--border2:#D5CFC7;
+  --font:'DM Sans',sans-serif;--serif:'DM Serif Display',serif;--mono:'DM Mono',monospace;
+  --r:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,242,237,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.3px;text-decoration:none}
+.nav-logo em{color:var(--accent);font-style:normal}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:13px;color:var(--ink2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--accent);color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;transition:background .15s}
+.nav-cta:hover{background:var(--accent-d);color:#fff}
+@media(max-width:640px){.nav-links{display:none}nav{padding:0 20px}}
+
+/* HERO */
+.hero{padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,71,12,.06) 0%, transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-l);color:var(--accent);font-size:12px;font-weight:600;padding:5px 13px;border-radius:20px;margin-bottom:24px;letter-spacing:.03em}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-family:var(--serif);font-size:clamp(36px,6vw,68px);font-weight:400;line-height:1.1;letter-spacing:-.5px;color:var(--ink);margin-bottom:20px;max-width:820px;margin-left:auto;margin-right:auto}
+h1 em{color:var(--accent);font-style:italic}
+.hero-sub{font-size:clamp(15px,2vw,18px);color:var(--ink2);max-width:520px;margin:0 auto 36px;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero{padding:13px 28px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;transition:all .15s;display:inline-flex;align-items:center;gap:8px}
+.btn-hero-p{background:var(--accent);color:#fff}
+.btn-hero-p:hover{background:var(--accent-d)}
+.btn-hero-g{background:var(--card);color:var(--ink2);border:1px solid var(--border)}
+.btn-hero-g:hover{border-color:var(--accent);color:var(--accent)}
+.hero-proof{margin-top:28px;font-size:12px;color:var(--ink3);display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.hero-proof span{display:flex;align-items:center;gap:5px}
+
+/* APP PREVIEW */
+.preview-wrap{padding:0 40px 80px;max-width:1100px;margin:0 auto}
+.preview-frame{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 24px 80px rgba(26,23,20,.08),0 4px 20px rgba(26,23,20,.04)}
+.preview-bar{background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px}
+.preview-dots span{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px}
+.preview-dots span:nth-child(1){background:#FF5F56}
+.preview-dots span:nth-child(2){background:#FFBD2D}
+.preview-dots span:nth-child(3){background:#27C93F}
+.preview-url{flex:1;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:11px;color:var(--ink3);font-family:var(--mono);text-align:center}
+.preview-app{display:flex;height:420px}
+.preview-sidebar{width:180px;flex-shrink:0;border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column}
+.psidebar-logo{padding:0 16px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.psidebar-logo-n{font-size:13px;font-weight:600;color:var(--ink)}
+.psidebar-logo-n em{color:var(--accent);font-style:normal}
+.psidebar-logo-s{font-size:10px;color:var(--ink3)}
+.pnav-item{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:12px;color:var(--ink2)}
+.pnav-item.active{background:var(--accent-l);color:var(--accent);font-weight:500;border-left:2px solid var(--accent)}
+.pnav-dot{width:12px;height:12px;border-radius:3px;background:var(--border);flex-shrink:0}
+.pnav-dot.acc{background:var(--accent-l)}
+.preview-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.preview-topbar{padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500}
+.preview-chat{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.pchat-ai{display:flex;gap:8px}
+.pchat-av{width:22px;height:22px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.pchat-bubble{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--ink2);line-height:1.6;max-width:85%}
+.pchat-bubble strong{color:var(--ink)}
+.pchat-user{display:flex;justify-content:flex-end}
+.pchat-user-b{background:var(--blue-l);color:var(--ink);border-radius:8px;padding:7px 11px;font-size:11px;max-width:75%}
+.pchat-doc{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-left:30px}
+.pdoc-head{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--card)}
+.pdoc-badge{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--accent-l);color:var(--accent);padding:2px 7px;border-radius:4px}
+.pdoc-num{font-size:9px;color:var(--ink3);font-family:var(--mono)}
+.pdoc-body{padding:8px 12px}
+.pdoc-line{display:flex;justify-content:space-between;font-size:10px;color:var(--ink2);border-bottom:1px solid var(--border);padding:4px 0}
+.pdoc-line:last-child{border:none;font-weight:600;color:var(--ink);font-size:11px}
+.pdoc-line span:last-child{color:var(--accent)}
+.pinput{padding:8px 12px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center}
+.pinput-bar{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--ink3)}
+.pinput-send{width:26px;height:26px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* SECTION TITLES */
+.section{padding:80px 40px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.section-title{font-family:var(--serif);font-size:clamp(28px,4vw,44px);font-weight:400;line-height:1.15;letter-spacing:-.3px;color:var(--ink);margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--ink2);max-width:500px;line-height:1.7}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border-radius:16px;overflow:hidden;margin-top:48px}
+.step{background:var(--card);padding:32px 28px;position:relative}
+.step-n{font-family:var(--serif);font-size:48px;font-weight:400;color:var(--accent-l);line-height:1;margin-bottom:16px;letter-spacing:-2px}
+.step-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.step-icon svg{width:20px;height:20px;color:var(--accent)}
+.step h3{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px;letter-spacing:-.2px}
+.step p{font-size:13px;color:var(--ink2);line-height:1.7}
+@media(max-width:768px){.steps{grid-template-columns:1fr}}
+
+/* FEATURES */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+.feat-icon{width:36px;height:36px;border-radius:8px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.feat-icon svg{width:18px;height:18px;color:var(--accent)}
+.feat h3{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.feat p{font-size:13px;color:var(--ink2);line-height:1.7}
+@media(max-width:640px){.features{grid-template-columns:1fr}}
+
+/* DEMO */
+.demo-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:48px}
+.demo-head{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.demo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.demo-title{font-size:14px;font-weight:500}
+.demo-sub{font-size:11px;color:var(--ink3)}
+.demo-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.demo-input{padding:28px;border-right:1px solid var(--border)}
+.demo-input-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.demo-prompt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--ink2);line-height:1.7;font-family:var(--mono);margin-bottom:12px;position:relative}
+.demo-prompt-cursor{display:inline-block;width:2px;height:14px;background:var(--accent);vertical-align:middle;animation:blink 1s step-start infinite;margin-left:1px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.demo-examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.demo-ex{font-size:11px;padding:4px 10px;border-radius:16px;border:1px solid var(--border);background:var(--bg);color:var(--ink2);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.demo-ex:hover,.demo-ex.active{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.demo-output{padding:28px}
+.demo-output-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.demo-doc{background:var(--card2);border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:12px;opacity:0;transition:all .3s}
+.demo-doc.visible{opacity:1}
+.demo-doc-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;background:var(--card)}
+.demo-badge{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:5px}
+.demo-badge-d{background:var(--accent-l);color:var(--accent)}
+.demo-badge-f{background:var(--blue-l);color:var(--blue)}
+.demo-badge-r{background:var(--amber-l);color:var(--amber)}
+.demo-doc-body{padding:12px 14px}
+.demo-dline{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--ink2)}
+.demo-dline:last-child{border:none;font-weight:600;color:var(--ink)}
+.demo-dline span:last-child{color:var(--accent)}
+.demo-doc-actions{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:6px;background:var(--card)}
+.dab{font-size:11px;padding:5px 10px;border-radius:6px;font-family:var(--font);cursor:pointer;font-weight:500;transition:all .15s;border:none}
+.dab-p{background:var(--green-l);color:var(--green);border:1px solid #9FE1CB}
+.dab-g{background:transparent;color:var(--ink2);border:1px solid var(--border)}
+@media(max-width:640px){.demo-body{grid-template-columns:1fr}.demo-input{border-right:none;border-bottom:1px solid var(--border)}}
+
+/* PRIVACY */
+.privacy-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:48px;margin-top:0;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.privacy-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-l);color:var(--green);font-size:12px;font-weight:600;padding:5px 13px;border-radius:20px;margin-bottom:20px}
+.privacy-points{margin-top:24px;display:flex;flex-direction:column;gap:12px}
+.privacy-pt{display:flex;gap:12px;align-items:flex-start}
+.privacy-check{width:20px;height:20px;border-radius:50%;background:var(--green-l);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.privacy-check svg{width:11px;height:11px;color:var(--green)}
+.privacy-pt-text{font-size:13px;color:var(--ink2);line-height:1.6}
+.privacy-pt-text strong{color:var(--ink)}
+.privacy-visual{background:var(--bg);border-radius:12px;padding:24px;border:1px solid var(--border)}
+.pv-device{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;font-size:12px}
+.pv-device-icon{width:32px;height:32px;border-radius:8px;background:var(--blue-l);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pv-device-icon svg{width:16px;height:16px;color:var(--blue)}
+.pv-lock{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--green);font-weight:500;padding:8px 0}
+.pv-cloud{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;opacity:.4;display:flex;align-items:center;gap:12px;font-size:12px;position:relative}
+.pv-cloud::before{content:'✕';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:16px;height:16px;background:#C0392B;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+@media(max-width:640px){.privacy-section{grid-template-columns:1fr;padding:28px}}
+
+/* TESTIMONIALS */
+.testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:48px}
+.testi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+.testi-stars{color:var(--accent);font-size:13px;margin-bottom:12px;letter-spacing:2px}
+.testi-text{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:16px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.testi-name{font-size:12px;font-weight:500;color:var(--ink)}
+.testi-meta{font-size:11px;color:var(--ink3)}
+@media(max-width:768px){.testimonials{grid-template-columns:1fr}}
+
+/* CTA */
+.cta-wrap{background:var(--ink);border-radius:20px;padding:64px 48px;text-align:center;margin:0 0 80px;position:relative;overflow:hidden}
+.cta-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 100%, rgba(212,71,12,.2) 0%, transparent 70%);pointer-events:none}
+.cta-wrap h2{font-family:var(--serif);font-size:clamp(28px,4vw,48px);font-weight:400;color:#fff;margin-bottom:16px;letter-spacing:-.3px}
+.cta-wrap h2 em{color:var(--accent);font-style:italic}
+.cta-wrap p{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.7}
+.btn-cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;transition:background .15s}
+.btn-cta:hover{background:var(--accent-d)}
+.cta-note{margin-top:16px;font-size:12px;color:rgba(255,255,255,.35)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ink3)}
+footer a{color:var(--ink3);text-decoration:none}
+footer a:hover{color:var(--accent)}
+.footer-logo{font-size:14px;font-weight:600;color:var(--ink)}
+.footer-logo em{color:var(--accent);font-style:normal}
+@media(max-width:640px){footer{flex-direction:column;gap:12px;text-align:center}}
+
+/* SECTION OUTER */
+.section-outer{padding:80px 40px}
+.section-inner{max-width:1100px;margin:0 auto}
+@media(max-width:768px){.section-outer{padding:60px 20px}.hero{padding:120px 20px 60px}.preview-wrap{padding:0 20px 60px}}
+
+/* Animations */
+.fade-up{opacity:0;transform:translateY(20px);transition:all .6s ease}
+.fade-up.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">artisan<em>AI</em></a>
+  <div class="nav-links">
+    <a href="#comment">Comment ça marche</a>
+    <a href="#confidentialite">Confidentialité</a>
+    <a href="/app.html" class="nav-cta">Tester l'application →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Assistant disponible 24h/24
+  </div>
+  <h1>Vos devis et factures,<br>en <em>quelques secondes</em></h1>
+  <p class="hero-sub">Décrivez votre prestation en langage naturel ou dictez-la sur le chantier. artisanAI génère vos documents professionnels instantanément.</p>
+  <div class="hero-btns">
+    <a href="/app.html" class="btn-hero btn-hero-p">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2L8 14M2 8L14 8" opacity=".6"/><circle cx="8" cy="8" r="6"/></svg>
+      Tester l'application
+    </a>
+    <a href="/app.html" class="btn-hero btn-hero-g">Voir une démo →</a>
+  </div>
+  <div class="hero-proof">
+    <span>
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="var(--green)"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.5 5.5-4 4a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7 9.293l3.646-3.647a.5.5 0 0 1 .708.708z"/></svg>
+      Données sur votre appareil uniquement
+    </span>
+    <span>
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="var(--green)"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.5 5.5-4 4a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7 9.293l3.646-3.647a.5.5 0 0 1 .708.708z"/></svg>
+      Numérotation automatique
+    </span>
+    <span>
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="var(--green)"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.5 5.5-4 4a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7 9.293l3.646-3.647a.5.5 0 0 1 .708.708z"/></svg>
+      Export PDF en un clic
+    </span>
+  </div>
+</section>
+
+<!-- APP PREVIEW -->
+<div class="preview-wrap">
+  <div class="preview-frame">
+    <div class="preview-bar">
+      <div class="preview-dots"><span></span><span></span><span></span></div>
+      <div class="preview-url">artisanat-three.vercel.app</div>
+    </div>
+    <div class="preview-app">
+      <div class="preview-sidebar">
+        <div class="psidebar-logo">
+          <div class="psidebar-logo-n">artisan<em>AI</em></div>
+          <div class="psidebar-logo-s">Assistant administratif</div>
+        </div>
+        <div class="pnav-item active"><div class="pnav-dot acc"></div>Assistant IA</div>
+        <div class="pnav-item"><div class="pnav-dot"></div>Devis</div>
+        <div class="pnav-item"><div class="pnav-dot"></div>Factures</div>
+        <div class="pnav-item"><div class="pnav-dot"></div>Relances</div>
+        <div class="pnav-item"><div class="pnav-dot"></div>Clients</div>
+      </div>
+      <div class="preview-main">
+        <div class="preview-topbar">Assistant IA</div>
+        <div class="preview-chat">
+          <div class="pchat-ai">
+            <div class="pchat-av">AI</div>
+            <div class="pchat-bubble">Bonjour ! Décrivez ce dont vous avez besoin — ou dictez avec le 🎙 micro.<br><strong>Commencez par le type de document</strong> pour une numérotation automatique.</div>
+          </div>
+          <div class="pchat-user">
+            <div class="pchat-user-b">Devis remplacement chaudière M. Fontaine, Viessmann 24kW + pose 4h, SAV inclus</div>
+          </div>
+          <div class="pchat-ai">
+            <div class="pchat-av">AI</div>
+            <div class="pchat-bubble">Voici votre devis généré :</div>
+          </div>
+          <div class="pchat-doc">
+            <div class="pdoc-head">
+              <div><div class="pdoc-badge">Devis</div><div class="pdoc-num" style="margin-top:3px">DEV-2025-004 · 18 avr. 2025</div></div>
+              <div style="text-align:right;font-size:11px;color:var(--ink2)">M. Fontaine</div>
+            </div>
+            <div class="pdoc-body">
+              <div class="pdoc-line"><span>Chaudière Viessmann Vitodens 200-W 24kW</span><span>1 890 €</span></div>
+              <div class="pdoc-line"><span>Main d'œuvre installation (4h)</span><span>320 €</span></div>
+              <div class="pdoc-line"><span>Contrat SAV 1 an</span><span>180 €</span></div>
+              <div class="pdoc-line"><span>Total TTC</span><span>2 868 €</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="pinput">
+          <div class="pinput-bar">Ex : Facture carrelage Mme Dupuis…</div>
+          <div class="pinput-send">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l12-6-6 12V8H2z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section-outer" id="comment">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label">Comment ça marche</div>
+      <h2 class="section-title">Trois étapes,<br>c'est tout.</h2>
+      <p class="section-sub">Pas de formation, pas de logiciel compliqué. Vous savez déjà parler — c'est suffisant.</p>
+    </div>
+    <div class="steps fade-up">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/><path d="M7 7a3 3 0 0 1 6 0c0 2-3 3-3 4"/><circle cx="10" cy="15" r=".8" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <h3>Décrivez en langage naturel</h3>
+        <p>Tapez ou dictez votre prestation comme vous l'expliqueriez à un collègue. "Devis pose carrelage M. Martin, 15m², grès cérame..."</p>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="2" width="14" height="16" rx="2"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>
+        </div>
+        <h3>Le document est généré</h3>
+        <p>En quelques secondes, artisanAI crée un document professionnel avec numérotation automatique, TVA calculée et vos coordonnées pré-remplies.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10l4 4 10-8"/></svg>
+        </div>
+        <h3>Envoyez ou téléchargez</h3>
+        <p>Exportez en PDF, envoyez par email directement depuis l'app, ou générez une relance si une facture reste impayée.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="section-outer" id="demo" style="padding-top:0">
+  <div class="section-inner">
+    <div class="demo-wrap fade-up">
+      <div class="demo-head">
+        <div class="demo-dot"></div>
+        <div>
+          <div class="demo-title">Démo interactive</div>
+          <div class="demo-sub">Choisissez un exemple pour voir le résultat</div>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-input">
+          <div class="demo-input-label">Votre message</div>
+          <div class="demo-prompt" id="demo-prompt">
+            <span id="demo-text">Devis installation tableau électrique M. Faure, mise aux normes NF C 15-100 + 8 prises atelier</span><span class="demo-prompt-cursor"></span>
+          </div>
+          <div class="demo-examples">
+            <span class="demo-ex active" onclick="setDemo('devis')">Devis électricité</span>
+            <span class="demo-ex" onclick="setDemo('facture')">Facture plomberie</span>
+            <span class="demo-ex" onclick="setDemo('relance')">Relance impayée</span>
+          </div>
+        </div>
+        <div class="demo-output">
+          <div class="demo-output-label">Document généré</div>
+          <div class="demo-doc visible" id="demo-doc">
+            <div class="demo-doc-head">
+              <div><span class="demo-badge demo-badge-d" id="demo-badge">Devis</span><div style="font-size:9px;color:var(--ink3);margin-top:3px;font-family:var(--mono)" id="demo-num">DEV-2025-001 · 18 avr. 2025</div></div>
+              <div style="text-align:right;font-size:11px;color:var(--ink2)" id="demo-client">M. Faure</div>
+            </div>
+            <div class="demo-doc-body" id="demo-lines">
+              <div class="demo-dline"><span>Tableau électrique 13 modules</span><span>280 €</span></div>
+              <div class="demo-dline"><span>Câblage + mise aux normes NF C 15-100</span><span>420 €</span></div>
+              <div class="demo-dline"><span>8 prises atelier (pose + matériel)</span><span>240 €</span></div>
+              <div class="demo-dline"><span>Total TTC</span><span>1 134 €</span></div>
+            </div>
+            <div class="demo-doc-actions">
+              <button class="dab dab-p">Envoyer par email</button>
+              <button class="dab dab-g">Télécharger PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section-outer">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label">Fonctionnalités</div>
+      <h2 class="section-title">Tout ce dont un artisan<br>a besoin.</h2>
+    </div>
+    <div class="features fade-up">
+      <div class="feat">
+        <div class="feat-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="1" width="14" height="16" rx="2"/><path d="M5 6h8M5 9h8M5 12h5"/></svg>
+        </div>
+        <h3>Devis, factures & avoirs</h3>
+        <p>Générez tous vos documents comptables en quelques secondes. Numérotation séquentielle automatique et calcul de TVA inclus.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="7"/><path d="M6 7a2 2 0 0 1 4 0c0 1.5-2 2-2 3.5"/><circle cx="9" cy="13.5" r=".7" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <h3>Dictée vocale sur chantier</h3>
+        <p>Les mains occupées ? Activez le micro et dictez directement. Dites "Envoi" pour envoyer sans toucher l'écran.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9a6 6 0 1 0 12 0A6 6 0 0 0 3 9z"/><path d="M9 6v3.5l2.5 1.5"/></svg>
+        </div>
+        <h3>Relances automatiques</h3>
+        <p>Générez une relance personnalisée pour chaque impayé. Le ton et la date de retard sont ajustés automatiquement.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 2v14M3 8l6-6 6 6"/></svg>
+        </div>
+        <h3>Export PDF & envoi email</h3>
+        <p>Téléchargez vos documents en PDF ou ouvrez votre messagerie avec l'objet et le corps du mail déjà rédigés.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIDENTIALITE -->
+<div class="section-outer" id="confidentialite">
+  <div class="section-inner">
+    <div class="privacy-section fade-up">
+      <div>
+        <div class="privacy-badge">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.5 5.5-4 4a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7 9.293l3.646-3.647a.5.5 0 0 1 .708.708z"/></svg>
+          Vos données restent sur votre appareil
+        </div>
+        <h2 class="section-title" style="font-size:clamp(24px,3vw,36px)">Zéro serveur.<br>Zéro collecte.</h2>
+        <p style="font-size:14px;color:var(--ink2);line-height:1.7;margin-top:12px">Vos informations (SIRET, clients, numéros de documents) ne quittent jamais votre téléphone ou ordinateur. Seule la description de votre document est transmise à l'IA pour générer le contenu.</p>
+        <div class="privacy-points">
+          <div class="privacy-pt">
+            <div class="privacy-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-5"/></svg></div>
+            <div class="privacy-pt-text"><strong>Stockage local uniquement</strong> — votre profil entreprise et vos compteurs sont enregistrés sur votre appareil via localStorage.</div>
+          </div>
+          <div class="privacy-pt">
+            <div class="privacy-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-5"/></svg></div>
+            <div class="privacy-pt-text"><strong>Suppression complète</strong> — effacez toutes vos données en un clic depuis "Mon entreprise".</div>
+          </div>
+          <div class="privacy-pt">
+            <div class="privacy-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-5"/></svg></div>
+            <div class="privacy-pt-text"><strong>Message non conservé</strong> — vos descriptions sont transmises de façon sécurisée et ne sont pas réutilisées.</div>
+          </div>
+        </div>
+      </div>
+      <div class="privacy-visual">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px">Votre appareil</div>
+        <div class="pv-device">
+          <div class="pv-device-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="9" rx="1.5"/><path d="M5 14h6M8 12v2"/></svg></div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--ink)">Profil entreprise</div>
+            <div style="font-size:11px;color:var(--ink3)">SIRET · TVA · Coordonnées</div>
+          </div>
+        </div>
+        <div class="pv-device">
+          <div class="pv-device-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="10" height="12" rx="1.5"/><path d="M5.5 5h5M5.5 7.5h5"/></svg></div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--ink)">Compteurs numérotation</div>
+            <div style="font-size:11px;color:var(--ink3)">DEV-2025-XXX · FAC-2025-XXX</div>
+          </div>
+        </div>
+        <div class="pv-lock">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.5 5.5-4 4a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7 9.293l3.646-3.647a.5.5 0 0 1 .708.708z"/></svg>
+          Données protégées · jamais envoyées
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:16px 0 8px">Serveurs tiers</div>
+        <div class="pv-cloud">
+          <div style="width:32px;height:32px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10a4 4 0 1 1 3-6.65A3.5 3.5 0 1 1 12 7h-2"/><path d="M8 8v8"/></svg>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--ink)">Aucun stockage cloud</div>
+            <div style="font-size:11px;color:var(--ink3)">Vos données n'y arrivent jamais</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="section-outer" style="padding-top:0">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label">Ils utilisent artisanAI</div>
+      <h2 class="section-title">Ce que disent les artisans.</h2>
+    </div>
+    <div class="testimonials fade-up">
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Je faisais mes devis à la main depuis 12 ans. Maintenant je dicte depuis le van et c'est prêt avant d'arriver chez le client."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:var(--accent)">PL</div>
+          <div>
+            <div class="testi-name">Pierre L.</div>
+            <div class="testi-meta">Électricien, Lyon</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"J'ai généré ma première facture en 30 secondes. Mon comptable n'en revenait pas de la mise en page professionnelle."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:var(--blue)">SC</div>
+          <div>
+            <div class="testi-name">Sophie C.</div>
+            <div class="testi-meta">Carreleur, Bordeaux</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Les relances automatiques m'ont permis de récupérer trois impayés en une semaine. Un outil simple qui fait vraiment la différence."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:var(--green)">MR</div>
+          <div>
+            <div class="testi-name">Marc R.</div>
+            <div class="testi-meta">Plombier, Nantes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="section-outer" style="padding-top:0">
+  <div class="section-inner">
+    <div class="cta-wrap fade-up">
+      <h2>Prêt à gagner<br><em>5 minutes par document</em> ?</h2>
+      <p>Gratuit, sans inscription, sans installation. Vos données restent sur votre appareil.</p>
+      <a href="/app.html" class="btn-cta">Tester l'application →</a>
+      <div class="cta-note">Aucune carte bancaire requise · Fonctionne sur mobile et ordinateur</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">artisan<em>AI</em></div>
+  <div>© 2025 artisanAI — Vos données restent sur votre appareil</div>
+  <div style="display:flex;gap:16px">
+    <a href="/app.html">Application</a>
+    <a href="#">Politique de confidentialité</a>
+  </div>
+</footer>
+
+<script>
+// Démo interactive
+const demos = {
+  devis: {
+    text: "Devis installation tableau électrique M. Faure, mise aux normes NF C 15-100 + 8 prises atelier",
+    badge: "Devis", badgeClass: "demo-badge-d",
+    num: "DEV-2025-001 · 18 avr. 2025",
+    client: "M. Faure",
+    lines: [
+      ["Tableau électrique 13 modules","280 €"],
+      ["Câblage + mise aux normes NF C 15-100","420 €"],
+      ["8 prises atelier (pose + matériel)","240 €"],
+      ["Total TTC","1 134 €"],
+    ]
+  },
+  facture: {
+    text: "Facture remplacement chauffe-eau Mme Dupuis, Thermor 200L + pose 2h, garantie 2 ans",
+    badge: "Facture", badgeClass: "demo-badge-f",
+    num: "FAC-2025-007 · 18 avr. 2025",
+    client: "Mme Dupuis",
+    lines: [
+      ["Chauffe-eau Thermor 200L","680 €"],
+      ["Main d'œuvre pose (2h)","160 €"],
+      ["Garantie 2 ans incluse","—"],
+      ["Total TTC","921 €"],
+    ]
+  },
+  relance: {
+    text: "Relance facture impayée M. Bernard 890€, 38 jours de retard, ton ferme",
+    badge: "Relance", badgeClass: "demo-badge-r",
+    num: "REL-2025-003 · 18 avr. 2025",
+    client: "M. Bernard",
+    lines: [
+      ["Facture FAC-2025-003","890 €"],
+      ["Retard de paiement","38 jours"],
+      ["Pénalités applicables","oui"],
+      ["Montant dû","890 €"],
+    ]
+  }
+};
+
+function setDemo(type) {
+  const d = demos[type];
+  document.getElementById('demo-text').textContent = d.text;
+  const badge = document.getElementById('demo-badge');
+  badge.textContent = d.badge;
+  badge.className = 'demo-badge ' + d.badgeClass;
+  document.getElementById('demo-num').textContent = d.num;
+  document.getElementById('demo-client').textContent = d.client;
+  const lines = document.getElementById('demo-lines');
+  lines.innerHTML = d.lines.map((l,i) =>
+    `<div class="demo-dline"><span>${l[0]}</span><span>${l[1]}</span></div>`
+  ).join('');
+  const doc = document.getElementById('demo-doc');
+  doc.classList.remove('visible');
+  setTimeout(() => doc.classList.add('visible'), 50);
+  document.querySelectorAll('.demo-ex').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// Fade-up on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
